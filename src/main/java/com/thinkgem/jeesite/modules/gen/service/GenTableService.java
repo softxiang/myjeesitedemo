@@ -162,7 +162,7 @@ public class GenTableService extends BaseService {
 	@Transactional(readOnly = false)
 	public void delete(GenTable genTable) {
 		genTableDao.delete(genTable);
-		genTableColumnDao.deleteByGenTableId(genTable.getId());
+		genTableColumnDao.deleteByGenTableId(genTable.DEL_FLAG_DELETE,genTable.getId());
 	}
 	
 }

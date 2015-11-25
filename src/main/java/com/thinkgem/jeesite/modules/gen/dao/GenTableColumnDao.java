@@ -3,6 +3,8 @@
  */
 package com.thinkgem.jeesite.modules.gen.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.gen.entity.GenTableColumn;
@@ -15,5 +17,5 @@ import com.thinkgem.jeesite.modules.gen.entity.GenTableColumn;
 @MyBatisDao
 public interface GenTableColumnDao extends CrudDao<GenTableColumn> {
 	
-	public void deleteByGenTableId(String genTableId);
+	public void deleteByGenTableId(@Param(value = "DEL_FLAG_DELETE") String DEL_FLAG_DELETE,@Param(value = "genTableId") String genTableId);
 }
