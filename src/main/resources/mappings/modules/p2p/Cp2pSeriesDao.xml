@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.p2p.dao.Cp2pSeriesDao">
+    
+	<sql id="cp2pSeriesColumns">
+		a.id AS "id",
+		a.platformid AS "cp2pPlatform.id",
+		a.name AS "name",
+		a.listuri AS "listuri",
+		a.pageattr AS "pageattr",
+		a.pagemax AS "pagemax",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="cp2pSeriesJoins">
+		LEFT JOIN c_p2p_platform b ON b.id = a.platformid
+	</sql>
+    
+	<select id="get" resultType="Cp2pSeries">
+		SELECT 
+			<include refid="cp2pSeriesColumns"/>
+		FROM c_p2p_series a
+		<include refid="cp2pSeriesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Cp2pSeries">
+		SELECT 
+			<include refid="cp2pSeriesColumns"/>
+		FROM c_p2p_series a
+		<include refid="cp2pSeriesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="cp2pPlatform != null and cp2pPlatform.id != null and cp2pPlatform.id != ''">
+				AND a.platformid = #{cp2pPlatform.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="listuri != null and listuri != ''">
+				AND a.listuri = #{listuri}
+			</if>
+			<if test="pageattr != null and pageattr != ''">
+				AND a.pageattr = #{pageattr}
+			</if>
+			<if test="pagemax != null and pagemax != ''">
+				AND a.pagemax = #{pagemax}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Cp2pSeries">
+		SELECT 
+			<include refid="cp2pSeriesColumns"/>
+		FROM c_p2p_series a
+		<include refid="cp2pSeriesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO c_p2p_series(
+			id,
+			platformid,
+			name,
+			listuri,
+			pageattr,
+			pagemax,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{cp2pPlatform.id},
+			#{name},
+			#{listuri},
+			#{pageattr},
+			#{pagemax},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE c_p2p_series SET 	
+			platformid = #{cp2pPlatform.id},
+			name = #{name},
+			listuri = #{listuri},
+			pageattr = #{pageattr},
+			pagemax = #{pagemax},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE c_p2p_series SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE platformid = #{cp2pPlatform.id}
+			</otherwise>
+		</choose>
+	</update>
+	
+</mapper>

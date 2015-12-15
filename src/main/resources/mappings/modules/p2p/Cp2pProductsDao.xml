@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.p2p.dao.Cp2pProductsDao">
+    
+	<sql id="cp2pProductsColumns">
+		a.id AS "id",
+		a.seriesid AS "cp2pSeries.id",
+		a.sid AS "sid",
+		a.snum AS "snum",
+		a.name AS "name",
+		a.detailuri AS "detailuri",
+		a.rate AS "rate",
+		a.platformrate AS "platformrate",
+		a.totalrate AS "totalrate",
+		a.wanrate AS "wanrate",
+		a.totalmoney AS "totalmoney",
+		a.term AS "term",
+		a.termday AS "termday",
+		a.termmonth AS "termmonth",
+		a.termyear AS "termyear",
+		a.schedule AS "schedule",
+		a.interesttime AS "interesttime",
+		a.repaymode AS "repaymode",
+		a.repaydate AS "repaydate",
+		a.istransfer AS "istransfer",
+		a.allowtransfer AS "allowtransfer",
+		a.transfernotice AS "transfernotice",
+		a.ismortgage AS "ismortgage",
+		a.isguarantee AS "isguarantee",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="cp2pProductsJoins">
+	LEFT JOIN c_p2p_series b ON b.id = a.seriesid
+	</sql>
+    
+	<select id="get" resultType="Cp2pProducts">
+		SELECT 
+			<include refid="cp2pProductsColumns"/>
+		FROM c_p2p_products a
+		<include refid="cp2pProductsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Cp2pProducts">
+		SELECT 
+			<include refid="cp2pProductsColumns"/>
+		FROM c_p2p_products a
+		<include refid="cp2pProductsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="cp2pSeries != null and cp2pSeries.id != null and cp2pSeries.id != ''">
+				AND a.seriesid = #{cp2pSeries.id}
+			</if>
+			<if test="sid != null and sid != ''">
+				AND a.sid = #{sid}
+			</if>
+			<if test="snum != null and snum != ''">
+				AND a.snum = #{snum}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="detailuri != null and detailuri != ''">
+				AND a.detailuri = #{detailuri}
+			</if>
+			<if test="rate != null and rate != ''">
+				AND a.rate = #{rate}
+			</if>
+			<if test="platformrate != null and platformrate != ''">
+				AND a.platformrate = #{platformrate}
+			</if>
+			<if test="totalrate != null and totalrate != ''">
+				AND a.totalrate = #{totalrate}
+			</if>
+			<if test="wanrate != null and wanrate != ''">
+				AND a.wanrate = #{wanrate}
+			</if>
+			<if test="totalmoney != null and totalmoney != ''">
+				AND a.totalmoney = #{totalmoney}
+			</if>
+			<if test="term != null and term != ''">
+				AND a.term = #{term}
+			</if>
+			<if test="termday != null and termday != ''">
+				AND a.termday = #{termday}
+			</if>
+			<if test="termmonth != null and termmonth != ''">
+				AND a.termmonth = #{termmonth}
+			</if>
+			<if test="termyear != null and termyear != ''">
+				AND a.termyear = #{termyear}
+			</if>
+			<if test="schedule != null and schedule != ''">
+				AND a.schedule = #{schedule}
+			</if>
+			<if test="interesttime != null and interesttime != ''">
+				AND a.interesttime = #{interesttime}
+			</if>
+			<if test="repaymode != null and repaymode != ''">
+				AND a.repaymode = #{repaymode}
+			</if>
+			<if test="repaydate != null and repaydate != ''">
+				AND a.repaydate = #{repaydate}
+			</if>
+			<if test="istransfer != null and istransfer != ''">
+				AND a.istransfer = #{istransfer}
+			</if>
+			<if test="allowtransfer != null and allowtransfer != ''">
+				AND a.allowtransfer = #{allowtransfer}
+			</if>
+			<if test="transfernotice != null and transfernotice != ''">
+				AND a.transfernotice = #{transfernotice}
+			</if>
+			<if test="ismortgage != null and ismortgage != ''">
+				AND a.ismortgage = #{ismortgage}
+			</if>
+			<if test="isguarantee != null and isguarantee != ''">
+				AND a.isguarantee = #{isguarantee}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Cp2pProducts">
+		SELECT 
+			<include refid="cp2pProductsColumns"/>
+		FROM c_p2p_products a
+		<include refid="cp2pProductsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO c_p2p_products(
+			id,
+			seriesid,
+			sid,
+			snum,
+			name,
+			detailuri,
+			rate,
+			platformrate,
+			totalrate,
+			wanrate,
+			totalmoney,
+			term,
+			termday,
+			termmonth,
+			termyear,
+			schedule,
+			interesttime,
+			repaymode,
+			repaydate,
+			istransfer,
+			allowtransfer,
+			transfernotice,
+			ismortgage,
+			isguarantee,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{cp2pSeries.id},
+			#{sid},
+			#{snum},
+			#{name},
+			#{detailuri},
+			#{rate},
+			#{platformrate},
+			#{totalrate},
+			#{wanrate},
+			#{totalmoney},
+			#{term},
+			#{termday},
+			#{termmonth},
+			#{termyear},
+			#{schedule},
+			#{interesttime},
+			#{repaymode},
+			#{repaydate},
+			#{istransfer},
+			#{allowtransfer},
+			#{transfernotice},
+			#{ismortgage},
+			#{isguarantee},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE c_p2p_products SET 	
+			seriesid = #{cp2pSeries.id},
+			sid = #{sid},
+			snum = #{snum},
+			name = #{name},
+			detailuri = #{detailuri},
+			rate = #{rate},
+			platformrate = #{platformrate},
+			totalrate = #{totalrate},
+			wanrate = #{wanrate},
+			totalmoney = #{totalmoney},
+			term = #{term},
+			termday = #{termday},
+			termmonth = #{termmonth},
+			termyear = #{termyear},
+			schedule = #{schedule},
+			interesttime = #{interesttime},
+			repaymode = #{repaymode},
+			repaydate = #{repaydate},
+			istransfer = #{istransfer},
+			allowtransfer = #{allowtransfer},
+			transfernotice = #{transfernotice},
+			ismortgage = #{ismortgage},
+			isguarantee = #{isguarantee},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE c_p2p_products SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

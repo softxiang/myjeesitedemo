@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.cmtag.dao.CommonCategoryDao">
+    
+	<sql id="commonCategoryColumns">
+		a.id AS "id",
+		a.objcode AS "objcode",
+		a.objname AS "objname",
+		a.parent_id AS "parent.id",
+		a.objlevel AS "objlevel",
+		a.parent_ids AS "parentIds",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="commonCategoryJoins">
+	</sql>
+    
+	<select id="get" resultType="CommonCategory">
+		SELECT 
+			<include refid="commonCategoryColumns"/>
+		FROM common_category a
+		<include refid="commonCategoryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CommonCategory">
+		SELECT 
+			<include refid="commonCategoryColumns"/>
+		FROM common_category a
+		<include refid="commonCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="objcode != null and objcode != ''">
+				AND a.objcode = #{objcode}
+			</if>
+			<if test="objname != null and objname != ''">
+				AND a.objname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{objname}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{objname}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{objname},'%')</if>
+			</if>
+			<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+			</if>
+			<if test="objlevel != null and objlevel != ''">
+				AND a.objlevel = #{objlevel}
+			</if>
+			<if test="parentIds != null and parentIds != ''">
+				AND a.parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%'||#{parentIds}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{parentIds}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CommonCategory">
+		SELECT 
+			<include refid="commonCategoryColumns"/>
+		FROM common_category a
+		<include refid="commonCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO common_category(
+			id,
+			objcode,
+			objname,
+			parent_id,
+			objlevel,
+			parent_ids,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{objcode},
+			#{objname},
+			#{parent.id},
+			#{objlevel},
+			#{parentIds},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_category SET 	
+			objcode = #{objcode},
+			objname = #{objname},
+			parent_id = #{parent.id},
+			objlevel = #{objlevel},
+			parent_ids = #{parentIds},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE common_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
