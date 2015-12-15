@@ -293,7 +293,12 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
                 sb.append(c);
             }
         }
-
+        /***
+         * 修正如c_x_test返回cXTest在jsp中出现Property XXX not found on type XXX 字段存在 仍然报错的问题
+         * 修正驼峰命名 开始
+         */
+        sb.setCharAt(1, Character.toLowerCase(sb.charAt(1)));
+        //修正驼峰命名 结束
         return sb.toString();
     }
 
