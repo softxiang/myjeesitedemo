@@ -26,9 +26,8 @@ public class List5262Parser {
 	private final String cp2pSeriesId="f7ce85821fe24f008e12f90f0912c746";
 	public void work() {
 		log.info(getClass().getName() + "......start......");
-		Cp2pParserconfig cp2pParserconfig = (Cp2pParserconfig) context.getMergedJobDataMap().get("cp2pParserconfig");
-		Cp2pSeries cp2pSeries = (Cp2pSeries) context.getMergedJobDataMap().get("cp2pSeries");
 		try {
+			Cp2pSeries cp2pSeries = cp2pSeriesService.get(new Cp2pSeries(cp2pSeriesId));
 			int pageMax = cp2pSeries.getPagemax();
 			int curPage = 1;
 			for (; curPage <= pageMax; curPage++) {
