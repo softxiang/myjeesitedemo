@@ -3,6 +3,8 @@
  */
 package com.thinkgem.jeesite.modules.p2p.entity;
 
+import java.math.BigDecimal;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.thinkgem.jeesite.common.persistence.DataEntity;
@@ -20,16 +22,16 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 	private String snum;		// 原编号
 	private String name;		// 名称
 	private String detailuri;		// 详细地址
-	private String rate;		// 利率
-	private String platformrate;		// 平台利率
-	private String totalrate;		// 总利率
-	private String wanrate;		// 万元预计收益
-	private String totalmoney;		// 总金额
+	private BigDecimal rate;		// 利率
+	private BigDecimal platformrate;		// 平台利率
+	private BigDecimal totalrate;		// 总利率
+	private int wanrate;		// 万元预计收益
+	private BigDecimal totalmoney;		// 总金额
 	private String term;		// 周期
-	private String termday;		// 周期天
-	private String termmonth;		// 周期月
-	private String termyear;		// 周期年
-	private String schedule;		// 进度
+	private int termday;		// 周期天
+	private int termmonth;		// 周期月
+	private int termyear;		// 周期年
+	private int schedule;		// 进度
 	private String interesttime;		// 计息时间
 	private String repaymode;		// 还款方式
 	private String repaydate;		// 还款日期
@@ -92,46 +94,42 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.detailuri = detailuri;
 	}
 	
-	public String getRate() {
+	public BigDecimal getRate() {
 		return rate;
 	}
 
-	public void setRate(String rate) {
+	public void setRate(BigDecimal rate) {
 		this.rate = rate;
 	}
-	
-	public String getPlatformrate() {
+
+	public BigDecimal getPlatformrate() {
 		return platformrate;
 	}
 
-	public void setPlatformrate(String platformrate) {
+	public void setPlatformrate(BigDecimal platformrate) {
 		this.platformrate = platformrate;
 	}
-	
-	public String getTotalrate() {
-		return totalrate;
+
+	public BigDecimal getTotalrate() {
+		return rate.add(platformrate);
 	}
 
-	public void setTotalrate(String totalrate) {
-		this.totalrate = totalrate;
-	}
-	
-	public String getWanrate() {
-		return wanrate;
+	public int getWanrate() {
+		if(termday>0){
+			return totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).divide(new BigDecimal(365),4,BigDecimal.ROUND_UP).multiply(new BigDecimal(termday)).intValue();
+		}else{
+			return 0;
+		}
 	}
 
-	public void setWanrate(String wanrate) {
-		this.wanrate = wanrate;
-	}
-	
-	public String getTotalmoney() {
+	public BigDecimal getTotalmoney() {
 		return totalmoney;
 	}
 
-	public void setTotalmoney(String totalmoney) {
+	public void setTotalmoney(BigDecimal totalmoney) {
 		this.totalmoney = totalmoney;
 	}
-	
+
 	@Length(min=0, max=50, message="周期长度必须介于 0 和 50 之间")
 	public String getTerm() {
 		return term;
@@ -140,39 +138,39 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 	public void setTerm(String term) {
 		this.term = term;
 	}
-	
-	public String getTermday() {
+
+	public int getTermday() {
 		return termday;
 	}
 
-	public void setTermday(String termday) {
+	public void setTermday(int termday) {
 		this.termday = termday;
 	}
-	
-	public String getTermmonth() {
+
+	public int getTermmonth() {
 		return termmonth;
 	}
 
-	public void setTermmonth(String termmonth) {
+	public void setTermmonth(int termmonth) {
 		this.termmonth = termmonth;
 	}
-	
-	public String getTermyear() {
+
+	public int getTermyear() {
 		return termyear;
 	}
 
-	public void setTermyear(String termyear) {
+	public void setTermyear(int termyear) {
 		this.termyear = termyear;
 	}
-	
-	public String getSchedule() {
+
+	public int getSchedule() {
 		return schedule;
 	}
 
-	public void setSchedule(String schedule) {
+	public void setSchedule(int schedule) {
 		this.schedule = schedule;
 	}
-	
+
 	@Length(min=0, max=50, message="计息时间长度必须介于 0 和 50 之间")
 	public String getInteresttime() {
 		return interesttime;
