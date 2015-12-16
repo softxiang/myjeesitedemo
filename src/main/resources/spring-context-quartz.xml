@@ -22,7 +22,7 @@
 		</property>
 	</bean>
 	<!-- 定义触发时间 -->
-	<bean id="list5262ParserJobTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="list5262ParserJobTime" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="list5262ParserJob" />
 		</property>

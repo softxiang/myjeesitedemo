@@ -26,6 +26,7 @@ public class List5262Parser {
 	private final String cp2pSeriesId="f7ce85821fe24f008e12f90f0912c746";
 	public void work() {
 		log.info(getClass().getName() + "......start......");
+		/**
 		try {
 			Cp2pSeries cp2pSeries = cp2pSeriesService.get(new Cp2pSeries(cp2pSeriesId));
 			int pageMax = cp2pSeries.getPagemax();
@@ -79,6 +80,7 @@ public class List5262Parser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		**/
 		log.info(getClass().getName() + "......end......");
 	}
 }
