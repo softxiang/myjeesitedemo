@@ -31,7 +31,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 	private int termday;		// 周期天
 	private int termmonth;		// 周期月
 	private int termyear;		// 周期年
-	private int schedule;		// 进度
+	private float schedule;		// 进度
 	private String interesttime;		// 计息时间
 	private String repaymode;		// 还款方式
 	private String repaydate;		// 还款日期
@@ -43,6 +43,10 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 	
 	public Cp2pProducts() {
 		super();
+		this.rate = new BigDecimal(0);
+		this.platformrate = new BigDecimal(0);
+		this.totalrate = new BigDecimal(0);
+		this.totalmoney = new BigDecimal(0);
 	}
 
 	public Cp2pProducts(String id){
@@ -116,10 +120,13 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 
 	public int getWanrate() {
 		if(termday>0){
-			return totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).divide(new BigDecimal(365),4,BigDecimal.ROUND_UP).multiply(new BigDecimal(termday)).intValue();
-		}else{
-			return 0;
+			totalrate = totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).divide(new BigDecimal(365),4,BigDecimal.ROUND_UP).multiply(new BigDecimal(termday));
+		}else if(termmonth>0){
+			totalrate = totalrate.add(totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).divide(new BigDecimal(12),4,BigDecimal.ROUND_UP).multiply(new BigDecimal(termmonth)));
+		}else if(termyear>0){
+			totalrate = totalrate.add(totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).multiply(new BigDecimal(termyear)));
 		}
+		return totalrate.intValue();
 	}
 
 	public BigDecimal getTotalmoney() {
@@ -163,11 +170,11 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.termyear = termyear;
 	}
 
-	public int getSchedule() {
+	public float getSchedule() {
 		return schedule;
 	}
 
-	public void setSchedule(int schedule) {
+	public void setSchedule(float schedule) {
 		this.schedule = schedule;
 	}
 
