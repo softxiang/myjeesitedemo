@@ -1,7 +1,8 @@
-package com.thinkgem.jeesite.modules.p2p.p2pquartz.parser;
+package com.thinkgem.jeesite.modules.p2p.p2pparser.quartz.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,8 @@ import com.thinkgem.jeesite.modules.p2p.entity.Cp2pProducts;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pProductsService;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+
 @Service
 public class List5262Parser {
 	public final Logger log = Logger.getLogger(getClass());
@@ -29,6 +32,7 @@ public class List5262Parser {
 
 	public void work() {
 		log.info(getClass().getName() + "......start......");
+		/*
 		try {
 			Cp2pSeries cp2pSeries = cp2pSeriesService.get(new Cp2pSeries(cp2pSeriesId));
 			int pageMax = 1;// cp2pSeries.getPagemax();
@@ -55,7 +59,7 @@ public class List5262Parser {
 							// 标名称
 							String detailurl = td.getElementsByTag("a").get(0).absUrl("href");
 							String name = null == td.text() ? "" : td.text().trim();
-							String sid = detailurl.substring(detailurl.indexOf("id=")+3, detailurl.length());
+							String sid = detailurl.substring(detailurl.indexOf("id=") + 3, detailurl.length());
 							product.setSid(sid);
 							product.setDetailuri(detailurl);
 							product.setName(name);
@@ -74,7 +78,7 @@ public class List5262Parser {
 							while (m.find()) {
 								needtimeint = Integer.parseInt(m.group().trim());
 							}
-							
+
 							product.setTerm(tempstr);
 							if (-1 != tempstr.indexOf("日") || -1 != tempstr.indexOf("天")) {
 								product.setTermday(needtimeint);
@@ -96,44 +100,49 @@ public class List5262Parser {
 								jine = Integer.parseInt(m.group().trim());
 							}
 							if (tempstr.indexOf("万") != -1) {
-								jine = jine*10000;
+								jine = jine * 10000;
 							}
 							product.setTotalmoney(new BigDecimal(jine));
 						} else if (5 == tdindex) {
 							// 进度
 							String tempstr = null == td.text() ? "" : td.text().trim();
-							
-							if(tempstr.indexOf("满标")!=-1){
+
+							if (tempstr.indexOf("满标") != -1) {
 								product.setSchedule(100.00f);
-							}else{
-								product.setSchedule(Float.parseFloat(tempstr.substring(0, tempstr.length()-1)));
+							} else {
+								product.setSchedule(Float.parseFloat(tempstr.substring(0, tempstr.length() - 1)));
 							}
 						}
 					}
 					if (!StringUtils.isBlank(product.getDetailuri())) {
-						Detail5262Parser detail5262Parser = new Detail5262Parser(cp2pProductsService,product);
+						Detail5262Parser detail5262Parser = new Detail5262Parser(cp2pProductsService, product);
 						Thread thread = new Thread(detail5262Parser);
 						thread.start();
 					}
 				}
 			}
 		} catch (IOException e) {
-			log.warn(getClass().getName() + "出错，原因："+e.getLocalizedMessage());
+			log.warn(getClass().getName() + "出错，原因：" + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
+		***/
 		log.info(getClass().getName() + "......end......");
 	}
 }
 
-@Service
+/*
 class Detail5262Parser implements Runnable {
 	public final Logger log = Logger.getLogger(getClass());
 	private Cp2pProducts cp2pProducts;
-	private Cp2pProductsService cp2pProductsService ;
+	private Cp2pProductsService cp2pProductsService;
 
-	public Detail5262Parser(Cp2pProductsService cp2pProductsService,Cp2pProducts cp2pProducts) {
+	public Detail5262Parser(Cp2pProductsService cp2pProductsService, Cp2pProducts cp2pProducts) {
 		this.cp2pProducts = cp2pProducts;
 		this.cp2pProductsService = cp2pProductsService;
+		this.cp2pProducts.setUpdateBy(UserUtils.get("1"));
+		this.cp2pProducts.setCreateBy(UserUtils.get("1"));
+		this.cp2pProducts.setCreateDate(new Date());
+		this.cp2pProducts.setUpdateDate(new Date());
 	}
 
 	@Override
@@ -141,14 +150,14 @@ class Detail5262Parser implements Runnable {
 		log.info(getClass().getName() + "......start......");
 		try {
 			Document doc = Jsoup.connect(cp2pProducts.getDetailuri()).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").get();
-			//合同编号
+			// 合同编号
 			Elements htspans = doc.select(".detail-info .title span");
-			if(1==htspans.size()){
+			if (1 == htspans.size()) {
 				Element htspan = htspans.get(0);
 				String htbh = null == htspan.text() ? "" : htspan.text().trim();
 				cp2pProducts.setSnum(htbh);
-			}else{
-				log.warn(getClass().getName() + " 未获取到合同编号！"+cp2pProducts.getDetailuri());
+			} else {
+				log.warn(getClass().getName() + " 未获取到合同编号！" + cp2pProducts.getDetailuri());
 			}
 			cp2pProductsService.save(cp2pProducts);
 		} catch (IOException e) {
@@ -157,3 +166,4 @@ class Detail5262Parser implements Runnable {
 		log.info(getClass().getName() + "......end......");
 	}
 }
+*/

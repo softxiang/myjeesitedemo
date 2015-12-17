@@ -41,8 +41,10 @@
 		<dozer.version>5.5.1</dozer.version>
 		<poi.version>3.9</poi.version>
 		<freemarker.version>2.3.20</freemarker.version>
+		<!-- 
 		<quartz.version>2.2.2</quartz.version>
 		<javassist.version>3.18.1-GA</javassist.version>
+		 -->
 		<jsoup.version>1.8.3</jsoup.version>
 
 		<!-- jdbc driver setting -->
@@ -614,6 +616,7 @@
 		</dependency>
 		<!-- CKFinder end -->
 		<!-- quartz begin -->
+		<!-- 
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
@@ -624,6 +627,7 @@
 			<artifactId>quartz-jobs</artifactId>
 			<version>${quartz.version}</version>
 		</dependency>
+		 -->
 		<!-- quartz end -->
 		<!-- jsoup begin -->
 		<dependency>
@@ -632,12 +636,13 @@
 			<version>${jsoup.version}</version>
 		</dependency>
 		<!-- jsoup end -->
+		<!-- 
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>${javassist.version}</version>
 		</dependency>
-
+ 		-->
 		<!-- TEST begin -->
 		<dependency>
 			<groupId>junit</groupId>

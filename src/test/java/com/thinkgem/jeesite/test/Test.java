@@ -1,18 +1,19 @@
 package com.thinkgem.jeesite.test;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.NotFoundException;
 
 public class Test {
 
 	public static void main(String[] args) {
-		Class clazz;
+		BigDecimal wanratetemp = new BigDecimal(0);
+		BigDecimal totalrate = new BigDecimal(12.00);
+		wanratetemp = totalrate.add(totalrate.divide(new BigDecimal(100)).multiply(new BigDecimal(10000)).divide(new BigDecimal(12)).multiply(new BigDecimal(6)));
+		System.out.println(wanratetemp.intValue());
+		
+		/*Class clazz;
 		try {
 			System.err.println(Test.class.getClass().getClassLoader());
 			clazz = Class.forName("com.thinkgem.jeesite.modules.p2p.p2pquartz.parser.List5262Parser");
@@ -21,7 +22,7 @@ public class Test {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} */
 		
 		/***
 		 * 
@@ -29,18 +30,6 @@ public class Test {
 		t.classLoad();
 		
 		 */
-	}
-
-	public static void javasistTest() {
-
-		ClassPool pool = ClassPool.getDefault();
-		try {
-			CtClass cc = pool.get("com.thinkgem.jeesite.modules.p2p.p2pquartz.parser.List5262Parser");
-			CtMethod m = cc.getDeclaredMethod("parser");
-		} catch (NotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void classLoad() {

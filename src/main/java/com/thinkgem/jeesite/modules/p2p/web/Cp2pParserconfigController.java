@@ -23,7 +23,7 @@ import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pParserconfig;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
-import com.thinkgem.jeesite.modules.p2p.p2pquartz.QuartzServices;
+import com.thinkgem.jeesite.modules.p2p.p2pparser.quartz.QuartzServices;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pParserconfigService;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
 

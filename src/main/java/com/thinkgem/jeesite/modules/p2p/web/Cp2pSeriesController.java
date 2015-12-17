@@ -91,7 +91,7 @@ public class Cp2pSeriesController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("p2p:cp2pSeries:view")
-	@RequestMapping(value = {"selectList", ""})
+	@RequestMapping(value = {"selectList"})
 	public Model selectlistList(@RequestParam(required=false) String name, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Cp2pSeries cp2pSeries = new Cp2pSeries();
 		cp2pSeries.setName(name);
