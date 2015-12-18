@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>平台信息管理</title>
+	<title>p2p平台管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -23,43 +23,12 @@
 				}
 			});
 		});
-		function addRow(list, idx, tpl, row){
-			$(list).append(Mustache.render(tpl, {
-				idx: idx, delBtn: true, row: row
-			}));
-			$(list+idx).find("select").each(function(){
-				$(this).val($(this).attr("data-value"));
-			});
-			$(list+idx).find("input[type='checkbox'], input[type='radio']").each(function(){
-				var ss = $(this).attr("data-value").split(',');
-				for (var i=0; i<ss.length; i++){
-					if($(this).val() == ss[i]){
-						$(this).attr("checked","checked");
-					}
-				}
-			});
-		}
-		function delRow(obj, prefix){
-			var id = $(prefix+"_id");
-			var delFlag = $(prefix+"_delFlag");
-			if (id.val() == ""){
-				$(obj).parent().parent().remove();
-			}else if(delFlag.val() == "0"){
-				delFlag.val("1");
-				$(obj).html("&divide;").attr("title", "撤销删除");
-				$(obj).parent().parent().addClass("error");
-			}else if(delFlag.val() == "1"){
-				delFlag.val("0");
-				$(obj).html("&times;").attr("title", "删除");
-				$(obj).parent().parent().removeClass("error");
-			}
-		}
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/p2p/cp2pPlatform/">平台信息列表</a></li>
-		<li class="active"><a href="${ctx}/p2p/cp2pPlatform/form?id=${cp2pPlatform.id}">平台信息<shiro:hasPermission name="p2p:cp2pPlatform:edit">${not empty cp2pPlatform.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="p2p:cp2pPlatform:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/p2p/cp2pPlatform/">p2p平台列表</a></li>
+		<li class="active"><a href="${ctx}/p2p/cp2pPlatform/form?id=${cp2pPlatform.id}">p2p平台<shiro:hasPermission name="p2p:cp2pPlatform:edit">${not empty cp2pPlatform.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="p2p:cp2pPlatform:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="cp2pPlatform" action="${ctx}/p2p/cp2pPlatform/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -67,14 +36,14 @@
 		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge required"/>
+				<form:input path="name" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">官网：</label>
+			<label class="control-label">平台网址：</label>
 			<div class="controls">
-				<form:input path="uri" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+				<form:input path="platformuri" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -90,7 +59,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">详细地址：</label>
+			<label class="control-label">地址：</label>
 			<div class="controls">
 				<form:input path="address" htmlEscape="false" maxlength="1000" class="input-xlarge "/>
 			</div>
@@ -107,71 +76,6 @@
 				<form:input path="city" htmlEscape="false" maxlength="100" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">remarks：</label>
-			<div class="controls">
-				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
-			</div>
-		</div>
-			<div class="control-group">
-				<label class="control-label">p2p产品类型：</label>
-				<div class="controls">
-					<table id="contentTable" class="table table-striped table-bordered table-condensed">
-						<thead>
-							<tr>
-								<th class="hide"></th>
-								<th>类型名称</th>
-								<th>列表地址</th>
-								<th>分页参数</th>
-								<th>最大获取页数</th>
-								<th>remarks</th>
-								<shiro:hasPermission name="p2p:cp2pPlatform:edit"><th width="10">&nbsp;</th></shiro:hasPermission>
-							</tr>
-						</thead>
-						<tbody id="cp2pSeriesList">
-						</tbody>
-						<shiro:hasPermission name="p2p:cp2pPlatform:edit"><tfoot>
-							<tr><td colspan="7"><a href="javascript:" onclick="addRow('#cp2pSeriesList', cp2pSeriesRowIdx, cp2pSeriesTpl);cp2pSeriesRowIdx = cp2pSeriesRowIdx + 1;" class="btn">新增</a></td></tr>
-						</tfoot></shiro:hasPermission>
-					</table>
-					<script type="text/template" id="cp2pSeriesTpl">//<!--
-						<tr id="cp2pSeriesList{{idx}}">
-							<td class="hide">
-								<input id="cp2pSeriesList{{idx}}_id" name="cp2pSeriesList[{{idx}}].id" type="hidden" value="{{row.id}}"/>
-								<input id="cp2pSeriesList{{idx}}_delFlag" name="cp2pSeriesList[{{idx}}].delFlag" type="hidden" value="0"/>
-							</td>
-							<td>
-								<input id="cp2pSeriesList{{idx}}_name" name="cp2pSeriesList[{{idx}}].name" type="text" value="{{row.name}}" maxlength="100" class="input-small "/>
-							</td>
-							<td>
-								<input id="cp2pSeriesList{{idx}}_listuri" name="cp2pSeriesList[{{idx}}].listuri" type="text" value="{{row.listuri}}" maxlength="200" class="input-small "/>
-							</td>
-							<td>
-								<input id="cp2pSeriesList{{idx}}_pageattr" name="cp2pSeriesList[{{idx}}].pageattr" type="text" value="{{row.pageattr}}" maxlength="50" class="input-small "/>
-							</td>
-							<td>
-								<input id="cp2pSeriesList{{idx}}_pagemax" name="cp2pSeriesList[{{idx}}].pagemax" type="text" value="{{row.pagemax}}" class="input-small  digits"/>
-							</td>
-							<td>
-								<textarea id="cp2pSeriesList{{idx}}_remarks" name="cp2pSeriesList[{{idx}}].remarks" rows="4" maxlength="255" class="input-small ">{{row.remarks}}</textarea>
-							</td>
-							<shiro:hasPermission name="p2p:cp2pPlatform:edit"><td class="text-center" width="10">
-								{{#delBtn}}<span class="close" onclick="delRow(this, '#cp2pSeriesList{{idx}}')" title="删除">&times;</span>{{/delBtn}}
-							</td></shiro:hasPermission>
-						</tr>//-->
-					</script>
-					<script type="text/javascript">
-						var cp2pSeriesRowIdx = 0, cp2pSeriesTpl = $("#cp2pSeriesTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");
-						$(document).ready(function() {
-							var data = ${fns:toJson(cp2pPlatform.cp2pSeriesList)};
-							for (var i=0; i<data.length; i++){
-								addRow('#cp2pSeriesList', cp2pSeriesRowIdx, cp2pSeriesTpl, data[i]);
-								cp2pSeriesRowIdx = cp2pSeriesRowIdx + 1;
-							}
-						});
-					</script>
-				</div>
-			</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="p2p:cp2pPlatform:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

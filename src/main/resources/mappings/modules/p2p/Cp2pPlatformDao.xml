@@ -5,7 +5,7 @@
 	<sql id="cp2pPlatformColumns">
 		a.id AS "id",
 		a.name AS "name",
-		a.uri AS "uri",
+		a.platformuri AS "platformuri",
 		a.companyname AS "companyname",
 		a.corporation AS "corporation",
 		a.address AS "address",
@@ -15,7 +15,6 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
-		a.remarks AS "remarks",
 		a.del_flag AS "delFlag"
 	</sql>
 	
@@ -43,23 +42,8 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="uri != null and uri != ''">
-				AND a.uri = #{uri}
-			</if>
 			<if test="companyname != null and companyname != ''">
 				AND a.companyname = #{companyname}
-			</if>
-			<if test="corporation != null and corporation != ''">
-				AND a.corporation = #{corporation}
-			</if>
-			<if test="address != null and address != ''">
-				AND a.address = #{address}
-			</if>
-			<if test="province != null and province != ''">
-				AND a.province = #{province}
-			</if>
-			<if test="city != null and city != ''">
-				AND a.city = #{city}
 			</if>
 		</where>
 		<choose>
@@ -94,7 +78,7 @@
 		INSERT INTO c_p2p_platform(
 			id,
 			name,
-			uri,
+			platformuri,
 			companyname,
 			corporation,
 			address,
@@ -104,12 +88,11 @@
 			create_date,
 			update_by,
 			update_date,
-			remarks,
 			del_flag
 		) VALUES (
 			#{id},
 			#{name},
-			#{uri},
+			#{platformuri},
 			#{companyname},
 			#{corporation},
 			#{address},
@@ -119,7 +102,6 @@
 			#{createDate},
 			#{updateBy.id},
 			#{updateDate},
-			#{remarks},
 			#{delFlag}
 		)
 	</insert>
@@ -127,15 +109,14 @@
 	<update id="update">
 		UPDATE c_p2p_platform SET 	
 			name = #{name},
-			uri = #{uri},
+			platformuri = #{platformuri},
 			companyname = #{companyname},
 			corporation = #{corporation},
 			address = #{address},
 			province = #{province},
 			city = #{city},
 			update_by = #{updateBy.id},
-			update_date = #{updateDate},
-			remarks = #{remarks}
+			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

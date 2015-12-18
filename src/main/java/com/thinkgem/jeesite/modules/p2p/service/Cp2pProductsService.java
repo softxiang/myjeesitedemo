@@ -16,7 +16,7 @@ import com.thinkgem.jeesite.modules.p2p.dao.Cp2pProductsDao;
 /**
  * p2p产品Service
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 @Service
 @Transactional(readOnly = true)

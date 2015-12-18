@@ -4,27 +4,24 @@
 package com.thinkgem.jeesite.modules.p2p.entity;
 
 import org.hibernate.validator.constraints.Length;
-import java.util.List;
-import com.google.common.collect.Lists;
 
 import com.thinkgem.jeesite.common.persistence.DataEntity;
 
 /**
- * p2p平台信息Entity
+ * p2p平台Entity
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 public class Cp2pPlatform extends DataEntity<Cp2pPlatform> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// 名称
-	private String uri;		// 官网
+	private String platformuri;		// 平台网址
 	private String companyname;		// 公司名称
 	private String corporation;		// 法人
-	private String address;		// 详细地址
+	private String address;		// 地址
 	private String province;		// 省
 	private String city;		// 市
-	private List<Cp2pSeries> cp2pSeriesList = Lists.newArrayList();		// 子表列表
 	
 	public Cp2pPlatform() {
 		super();
@@ -34,7 +31,7 @@ public class Cp2pPlatform extends DataEntity<Cp2pPlatform> {
 		super(id);
 	}
 
-	@Length(min=1, max=100, message="名称长度必须介于 1 和 100 之间")
+	@Length(min=1, max=200, message="名称长度必须介于 1 和 200 之间")
 	public String getName() {
 		return name;
 	}
@@ -43,13 +40,13 @@ public class Cp2pPlatform extends DataEntity<Cp2pPlatform> {
 		this.name = name;
 	}
 	
-	@Length(min=0, max=200, message="官网长度必须介于 0 和 200 之间")
-	public String getUri() {
-		return uri;
+	@Length(min=0, max=200, message="平台网址长度必须介于 0 和 200 之间")
+	public String getPlatformuri() {
+		return platformuri;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setPlatformuri(String platformuri) {
+		this.platformuri = platformuri;
 	}
 	
 	@Length(min=0, max=200, message="公司名称长度必须介于 0 和 200 之间")
@@ -70,7 +67,7 @@ public class Cp2pPlatform extends DataEntity<Cp2pPlatform> {
 		this.corporation = corporation;
 	}
 	
-	@Length(min=0, max=1000, message="详细地址长度必须介于 0 和 1000 之间")
+	@Length(min=0, max=1000, message="地址长度必须介于 0 和 1000 之间")
 	public String getAddress() {
 		return address;
 	}
@@ -97,11 +94,4 @@ public class Cp2pPlatform extends DataEntity<Cp2pPlatform> {
 		this.city = city;
 	}
 	
-	public List<Cp2pSeries> getCp2pSeriesList() {
-		return cp2pSeriesList;
-	}
-
-	public void setCp2pSeriesList(List<Cp2pSeries> cp2pSeriesList) {
-		this.cp2pSeriesList = cp2pSeriesList;
-	}
 }

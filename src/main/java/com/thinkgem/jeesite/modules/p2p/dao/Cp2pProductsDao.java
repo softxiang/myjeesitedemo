@@ -10,7 +10,7 @@ import com.thinkgem.jeesite.modules.p2p.entity.Cp2pProducts;
 /**
  * p2p产品DAO接口
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 @MyBatisDao
 public interface Cp2pProductsDao extends CrudDao<Cp2pProducts> {

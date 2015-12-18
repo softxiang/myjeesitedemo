@@ -4,16 +4,35 @@
     
 	<sql id="cp2pSeriesColumns">
 		a.id AS "id",
-		a.platformid AS "cp2pPlatform.id",
+		b.id AS "cp2pPlatform.id",
+		b.name as "cp2pPlatform.name",
 		a.name AS "name",
 		a.listuri AS "listuri",
 		a.pageattr AS "pageattr",
 		a.pagemax AS "pagemax",
+		a.listdatatype AS "listdatatype",
+		a.listrootexp AS "listrootexp",
+		a.detailidexp AS "detailidexp",
+		a.detailprefix AS "detailprefix",
+		a.snumexp AS "snumexp",
+		a.nameexp AS "nameexp",
+		a.rateexp AS "rateexp",
+		a.platformrateexp AS "platformrateexp",
+		a.totolmoneyexp AS "totolmoneyexp",
+		a.termexp AS "termexp",
+		a.scheduleexp AS "scheduleexp",
+		a.starttimeexp AS "starttimeexp",
+		a.repaymodeexp AS "repaymodeexp",
+		a.repaydateexp AS "repaydateexp",
+		a.istransferexp AS "istransferexp",
+		a.allowtransfer AS "allowtransfer",
+		a.transfernoticeexp AS "transfernoticeexp",
+		a.ismortgageexp AS "ismortgageexp",
+		a.isguaranteeexp AS "isguaranteeexp",
 		a.create_by AS "createBy.id",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
-		a.remarks AS "remarks",
 		a.del_flag AS "delFlag"
 	</sql>
 	
@@ -45,22 +64,13 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="listuri != null and listuri != ''">
-				AND a.listuri = #{listuri}
-			</if>
-			<if test="pageattr != null and pageattr != ''">
-				AND a.pageattr = #{pageattr}
-			</if>
-			<if test="pagemax != null and pagemax != ''">
-				AND a.pagemax = #{pagemax}
-			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.create_date ASC
+				ORDER BY a.update_date DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -78,7 +88,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.create_date ASC
+				ORDER BY a.update_date DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -91,11 +101,29 @@
 			listuri,
 			pageattr,
 			pagemax,
+			listdatatype,
+			listrootexp,
+			detailidexp,
+			detailprefix,
+			snumexp,
+			nameexp,
+			rateexp,
+			platformrateexp,
+			totolmoneyexp,
+			termexp,
+			scheduleexp,
+			starttimeexp,
+			repaymodeexp,
+			repaydateexp,
+			istransferexp,
+			allowtransfer,
+			transfernoticeexp,
+			ismortgageexp,
+			isguaranteeexp,
 			create_by,
 			create_date,
 			update_by,
 			update_date,
-			remarks,
 			del_flag
 		) VALUES (
 			#{id},
@@ -104,11 +132,29 @@
 			#{listuri},
 			#{pageattr},
 			#{pagemax},
+			#{listdatatype},
+			#{listrootexp},
+			#{detailidexp},
+			#{detailprefix},
+			#{snumexp},
+			#{nameexp},
+			#{rateexp},
+			#{platformrateexp},
+			#{totolmoneyexp},
+			#{termexp},
+			#{scheduleexp},
+			#{starttimeexp},
+			#{repaymodeexp},
+			#{repaydateexp},
+			#{istransferexp},
+			#{allowtransfer},
+			#{transfernoticeexp},
+			#{ismortgageexp},
+			#{isguaranteeexp},
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
 			#{updateDate},
-			#{remarks},
 			#{delFlag}
 		)
 	</insert>
@@ -120,23 +166,34 @@
 			listuri = #{listuri},
 			pageattr = #{pageattr},
 			pagemax = #{pagemax},
+			listdatatype = #{listdatatype},
+			listrootexp = #{listrootexp},
+			detailidexp = #{detailidexp},
+			detailprefix = #{detailprefix},
+			snumexp = #{snumexp},
+			nameexp = #{nameexp},
+			rateexp = #{rateexp},
+			platformrateexp = #{platformrateexp},
+			totolmoneyexp = #{totolmoneyexp},
+			termexp = #{termexp},
+			scheduleexp = #{scheduleexp},
+			starttimeexp = #{starttimeexp},
+			repaymodeexp = #{repaymodeexp},
+			repaydateexp = #{repaydateexp},
+			istransferexp = #{istransferexp},
+			allowtransfer = #{allowtransfer},
+			transfernoticeexp = #{transfernoticeexp},
+			ismortgageexp = #{ismortgageexp},
+			isguaranteeexp = #{isguaranteeexp},
 			update_by = #{updateBy.id},
-			update_date = #{updateDate},
-			remarks = #{remarks}
+			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
 		UPDATE c_p2p_series SET 
 			del_flag = #{DEL_FLAG_DELETE}
-		<choose>
-			<when test="id !=null and id != ''">
-				WHERE id = #{id}
-			</when>
-			<otherwise>
-				WHERE platformid = #{cp2pPlatform.id}
-			</otherwise>
-		</choose>
+		WHERE id = #{id}
 	</update>
 	
 </mapper>

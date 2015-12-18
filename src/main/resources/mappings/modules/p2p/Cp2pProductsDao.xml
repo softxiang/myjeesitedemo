@@ -4,7 +4,10 @@
     
 	<sql id="cp2pProductsColumns">
 		a.id AS "id",
-		a.seriesid AS "cp2pSeries.id",
+		b.id AS "cp2pSeries.id",
+		b.name AS "cp2pSeries.name",
+		c.id AS "cp2pSeries.cp2pPlatform.id",
+		c.name AS "cp2pSeries.cp2pPlatform.name",
 		a.sid AS "sid",
 		a.snum AS "snum",
 		a.name AS "name",
@@ -19,6 +22,7 @@
 		a.termmonth AS "termmonth",
 		a.termyear AS "termyear",
 		a.schedule AS "schedule",
+		a.starttime AS "starttime",
 		a.interesttime AS "interesttime",
 		a.repaymode AS "repaymode",
 		a.repaydate AS "repaydate",
@@ -31,12 +35,12 @@
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
-		a.remarks AS "remarks",
 		a.del_flag AS "delFlag"
 	</sql>
 	
 	<sql id="cp2pProductsJoins">
-	LEFT JOIN c_p2p_series b ON b.id = a.seriesid
+		LEFT JOIN c_p2p_series b ON b.id = a.seriesid
+		LEFT JOIN c_p2p_platform c ON b.platformid = c.id
 	</sql>
     
 	<select id="get" resultType="Cp2pProducts">
@@ -54,77 +58,11 @@
 		<include refid="cp2pProductsJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="cp2pSeries != null and cp2pSeries.id != null and cp2pSeries.id != ''">
-				AND a.seriesid = #{cp2pSeries.id}
-			</if>
-			<if test="sid != null and sid != ''">
-				AND a.sid = #{sid}
-			</if>
-			<if test="snum != null and snum != ''">
-				AND a.snum = #{snum}
-			</if>
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
-			</if>
-			<if test="detailuri != null and detailuri != ''">
-				AND a.detailuri = #{detailuri}
-			</if>
-			<if test="rate != null and rate != ''">
-				AND a.rate = #{rate}
-			</if>
-			<if test="platformrate != null and platformrate != ''">
-				AND a.platformrate = #{platformrate}
-			</if>
-			<if test="totalrate != null and totalrate != ''">
-				AND a.totalrate = #{totalrate}
-			</if>
-			<if test="wanrate != null and wanrate != ''">
-				AND a.wanrate = #{wanrate}
-			</if>
-			<if test="totalmoney != null and totalmoney != ''">
-				AND a.totalmoney = #{totalmoney}
-			</if>
-			<if test="term != null and term != ''">
-				AND a.term = #{term}
-			</if>
-			<if test="termday != null and termday != ''">
-				AND a.termday = #{termday}
-			</if>
-			<if test="termmonth != null and termmonth != ''">
-				AND a.termmonth = #{termmonth}
-			</if>
-			<if test="termyear != null and termyear != ''">
-				AND a.termyear = #{termyear}
-			</if>
-			<if test="schedule != null and schedule != ''">
-				AND a.schedule = #{schedule}
-			</if>
-			<if test="interesttime != null and interesttime != ''">
-				AND a.interesttime = #{interesttime}
-			</if>
-			<if test="repaymode != null and repaymode != ''">
-				AND a.repaymode = #{repaymode}
-			</if>
-			<if test="repaydate != null and repaydate != ''">
-				AND a.repaydate = #{repaydate}
-			</if>
-			<if test="istransfer != null and istransfer != ''">
-				AND a.istransfer = #{istransfer}
-			</if>
-			<if test="allowtransfer != null and allowtransfer != ''">
-				AND a.allowtransfer = #{allowtransfer}
-			</if>
-			<if test="transfernotice != null and transfernotice != ''">
-				AND a.transfernotice = #{transfernotice}
-			</if>
-			<if test="ismortgage != null and ismortgage != ''">
-				AND a.ismortgage = #{ismortgage}
-			</if>
-			<if test="isguarantee != null and isguarantee != ''">
-				AND a.isguarantee = #{isguarantee}
 			</if>
 		</where>
 		<choose>
@@ -173,6 +111,7 @@
 			termmonth,
 			termyear,
 			schedule,
+			starttime,
 			interesttime,
 			repaymode,
 			repaydate,
@@ -185,7 +124,6 @@
 			create_date,
 			update_by,
 			update_date,
-			remarks,
 			del_flag
 		) VALUES (
 			#{id},
@@ -204,6 +142,7 @@
 			#{termmonth},
 			#{termyear},
 			#{schedule},
+			#{starttime},
 			#{interesttime},
 			#{repaymode},
 			#{repaydate},
@@ -216,7 +155,6 @@
 			#{createDate},
 			#{updateBy.id},
 			#{updateDate},
-			#{remarks},
 			#{delFlag}
 		)
 	</insert>
@@ -238,6 +176,7 @@
 			termmonth = #{termmonth},
 			termyear = #{termyear},
 			schedule = #{schedule},
+			starttime = #{starttime},
 			interesttime = #{interesttime},
 			repaymode = #{repaymode},
 			repaydate = #{repaydate},
@@ -247,8 +186,7 @@
 			ismortgage = #{ismortgage},
 			isguarantee = #{isguarantee},
 			update_by = #{updateBy.id},
-			update_date = #{updateDate},
-			remarks = #{remarks}
+			update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

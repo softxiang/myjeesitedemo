@@ -34,20 +34,23 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">系列id：</label>
+			<label class="control-label">产品系列：</label>
 			<div class="controls">
-				<form:input path="cp2pSeries.id" htmlEscape="false" maxlength="64" class="input-xlarge required"/>
+				<form:select path="cp2pSeries.id" class="input-xlarge required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${cp2pSeriesList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">原id：</label>
+			<label class="control-label">原平台id：</label>
 			<div class="controls">
 				<form:input path="sid" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">原编号：</label>
+			<label class="control-label">原平台编号：</label>
 			<div class="controls">
 				<form:input path="snum" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
@@ -55,11 +58,11 @@
 		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+				<form:input path="name" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">详细地址：</label>
+			<label class="control-label">明细url：</label>
 			<div class="controls">
 				<form:input path="detailuri" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 			</div>
@@ -83,9 +86,9 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">万元预计收益：</label>
+			<label class="control-label">项目万元收益：</label>
 			<div class="controls">
-				<form:input path="wanrate" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="wanrate" htmlEscape="false" class="input-xlarge  digits"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -95,33 +98,41 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">周期：</label>
+			<label class="control-label">期限：</label>
 			<div class="controls">
 				<form:input path="term" htmlEscape="false" maxlength="50" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">周期天：</label>
+			<label class="control-label">日：</label>
 			<div class="controls">
-				<form:input path="termday" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="termday" htmlEscape="false" class="input-xlarge  digits"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">周期月：</label>
+			<label class="control-label">月：</label>
 			<div class="controls">
-				<form:input path="termmonth" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="termmonth" htmlEscape="false" class="input-xlarge  digits"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">周期年：</label>
+			<label class="control-label">年：</label>
 			<div class="controls">
-				<form:input path="termyear" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="termyear" htmlEscape="false" class="input-xlarge  digits"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">进度：</label>
 			<div class="controls">
-				<form:input path="schedule" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="schedule" htmlEscape="false" class="input-xlarge  digits"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">开始日期：</label>
+			<div class="controls">
+				<input name="starttime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
+					value="<fmt:formatDate value="${cp2pProducts.starttime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -143,19 +154,19 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">是否转让：</label>
+			<label class="control-label">是否转让标：</label>
 			<div class="controls">
 				<form:input path="istransfer" htmlEscape="false" maxlength="1" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">允许转让：</label>
+			<label class="control-label">是否允许转让：</label>
 			<div class="controls">
 				<form:input path="allowtransfer" htmlEscape="false" maxlength="1" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">转让注意事项：</label>
+			<label class="control-label">装让说明：</label>
 			<div class="controls">
 				<form:input path="transfernotice" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
@@ -170,12 +181,6 @@
 			<label class="control-label">是否担保：</label>
 			<div class="controls">
 				<form:input path="isguarantee" htmlEscape="false" maxlength="1" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">remarks：</label>
-			<div class="controls">
-				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">

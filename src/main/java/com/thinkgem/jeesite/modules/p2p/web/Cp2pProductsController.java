@@ -20,12 +20,14 @@ import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pProducts;
+import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pProductsService;
+import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
 
 /**
  * p2p产品Controller
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 @Controller
 @RequestMapping(value = "${adminPath}/p2p/cp2pProducts")
@@ -33,6 +35,8 @@ public class Cp2pProductsController extends BaseController {
 
 	@Autowired
 	private Cp2pProductsService cp2pProductsService;
+	@Autowired
+	private Cp2pSeriesService cp2pSeriesService;
 	
 	@ModelAttribute
 	public Cp2pProducts get(@RequestParam(required=false) String id) {
@@ -50,6 +54,7 @@ public class Cp2pProductsController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(Cp2pProducts cp2pProducts, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<Cp2pProducts> page = cp2pProductsService.findPage(new Page<Cp2pProducts>(request, response), cp2pProducts); 
+		model.addAttribute("cp2pSeriesList",cp2pSeriesService.findList(new Cp2pSeries()));
 		model.addAttribute("page", page);
 		return "modules/p2p/cp2pProductsList";
 	}
@@ -57,6 +62,7 @@ public class Cp2pProductsController extends BaseController {
 	@RequiresPermissions("p2p:cp2pProducts:view")
 	@RequestMapping(value = "form")
 	public String form(Cp2pProducts cp2pProducts, Model model) {
+		model.addAttribute("cp2pSeriesList",cp2pSeriesService.findList(new Cp2pSeries()));
 		model.addAttribute("cp2pProducts", cp2pProducts);
 		return "modules/p2p/cp2pProductsForm";
 	}

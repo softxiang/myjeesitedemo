@@ -8,9 +8,9 @@ import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pPlatform;
 
 /**
- * p2p平台信息DAO接口
+ * p2p平台DAO接口
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 @MyBatisDao
 public interface Cp2pPlatformDao extends CrudDao<Cp2pPlatform> {

@@ -23,9 +23,9 @@ import com.thinkgem.jeesite.modules.p2p.entity.Cp2pPlatform;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pPlatformService;
 
 /**
- * p2p平台信息Controller
+ * p2p平台Controller
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 @Controller
 @RequestMapping(value = "${adminPath}/p2p/cp2pPlatform")
@@ -68,7 +68,7 @@ public class Cp2pPlatformController extends BaseController {
 			return form(cp2pPlatform, model);
 		}
 		cp2pPlatformService.save(cp2pPlatform);
-		addMessage(redirectAttributes, "保存平台信息成功");
+		addMessage(redirectAttributes, "保存p2p平台成功");
 		return "redirect:"+Global.getAdminPath()+"/p2p/cp2pPlatform/?repage";
 	}
 	
@@ -76,7 +76,7 @@ public class Cp2pPlatformController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(Cp2pPlatform cp2pPlatform, RedirectAttributes redirectAttributes) {
 		cp2pPlatformService.delete(cp2pPlatform);
-		addMessage(redirectAttributes, "删除平台信息成功");
+		addMessage(redirectAttributes, "删除p2p平台成功");
 		return "redirect:"+Global.getAdminPath()+"/p2p/cp2pPlatform/?repage";
 	}
 

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.modules.p2p.entity.Cp2pParserconfig;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
 import com.thinkgem.jeesite.modules.p2p.p2pparser.quartz.impl.ProxyJob;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
@@ -35,7 +34,7 @@ public class QuartzServices {
 	@Autowired
 	private Cp2pSeriesService cp2pSeriesService;
 
-	public boolean addJob(final Cp2pParserconfig cp2pParserconfig) {
+	public boolean addJob() {
 		boolean result = false;
 		// if (!CronExpression.isValidExpression(cp2pParserconfig.getCronex()))
 		// {
@@ -83,7 +82,7 @@ public class QuartzServices {
 	}
 
 	// delete a job
-	public boolean deleteJob(Cp2pParserconfig cp2pParserconfig) {
+	public boolean deleteJob() {
 		boolean result = false;
 		// String jobName = "";
 		// String jobGroup = "";

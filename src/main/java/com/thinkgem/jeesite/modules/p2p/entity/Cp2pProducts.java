@@ -3,59 +3,57 @@
  */
 package com.thinkgem.jeesite.modules.p2p.entity;
 
-import java.math.BigDecimal;
-
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.thinkgem.jeesite.common.persistence.DataEntity;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * p2p产品Entity
  * 
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 
 	private static final long serialVersionUID = 1L;
-	private Cp2pSeries cp2pSeries; // 系列id
-	private String sid; // 原id
-	private String snum; // 原编号
+	private Cp2pSeries cp2pSeries; // 产品系列
+	private String sid; // 原平台id
+	private String snum; // 原平台编号
 	private String name; // 名称
-	private String detailuri; // 详细地址
-	private BigDecimal rate; // 利率
-	private BigDecimal platformrate; // 平台利率
-	private BigDecimal totalrate; // 总利率
-	private int wanrate; // 万元预计收益
-	private BigDecimal totalmoney; // 总金额
-	private String term; // 周期
-	private int termday; // 周期天
-	private int termmonth; // 周期月
-	private int termyear; // 周期年
+	private String detailuri; // 明细url
+	private BigDecimal rate = new BigDecimal(0); // 利率
+	private BigDecimal platformrate = new BigDecimal(0); // 平台利率
+	private BigDecimal totalrate = new BigDecimal(0); // 总利率
+	private Integer wanrate; // 项目万元收益
+	private BigDecimal totalmoney = new BigDecimal(0); // 总金额
+	private String term; // 期限
+	private Integer termday = new Integer(0); // 日
+	private Integer termmonth = new Integer(0); // 月
+	private Integer termyear = new Integer(0); // 年
 	private float schedule; // 进度
+	private Date starttime; // 开始日期
 	private String interesttime; // 计息时间
 	private String repaymode; // 还款方式
 	private String repaydate; // 还款日期
-	private String istransfer; // 是否转让
-	private String allowtransfer; // 允许转让
-	private String transfernotice; // 转让注意事项
+	private String istransfer; // 是否转让标
+	private String allowtransfer; // 是否允许转让
+	private String transfernotice; // 装让说明
 	private String ismortgage; // 是否抵押
 	private String isguarantee; // 是否担保
 
 	public Cp2pProducts() {
 		super();
-		this.rate = new BigDecimal(0);
-		this.platformrate = new BigDecimal(0);
-		this.totalrate = new BigDecimal(0);
-		this.totalmoney = new BigDecimal(0);
 	}
 
 	public Cp2pProducts(String id) {
 		super(id);
 	}
 
-	@Length(min = 1, max = 64, message = "系列id长度必须介于 1 和 64 之间")
+	@Length(min = 1, max = 64, message = "产品系列长度必须介于 1 和 64 之间")
 	public Cp2pSeries getCp2pSeries() {
 		return cp2pSeries;
 	}
@@ -64,7 +62,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.cp2pSeries = cp2pSeries;
 	}
 
-	@Length(min = 0, max = 50, message = "原id长度必须介于 0 和 50 之间")
+	@Length(min = 0, max = 50, message = "原平台id长度必须介于 0 和 50 之间")
 	public String getSid() {
 		return sid;
 	}
@@ -73,7 +71,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.sid = sid;
 	}
 
-	@Length(min = 0, max = 50, message = "原编号长度必须介于 0 和 50 之间")
+	@Length(min = 0, max = 50, message = "原平台编号长度必须介于 0 和 50 之间")
 	public String getSnum() {
 		return snum;
 	}
@@ -82,7 +80,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.snum = snum;
 	}
 
-	@Length(min = 0, max = 100, message = "名称长度必须介于 0 和 100 之间")
+	@Length(min = 0, max = 200, message = "名称长度必须介于 0 和 200 之间")
 	public String getName() {
 		return name;
 	}
@@ -91,7 +89,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.name = name;
 	}
 
-	@Length(min = 0, max = 500, message = "详细地址长度必须介于 0 和 500 之间")
+	@Length(min = 0, max = 500, message = "明细url长度必须介于 0 和 500 之间")
 	public String getDetailuri() {
 		return detailuri;
 	}
@@ -121,7 +119,11 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		return totalrate;
 	}
 
-	public void setWanrate() {
+	public void setTotalrate() {
+		getTotalrate();
+	}
+
+	public Integer getWanrate() {
 		BigDecimal wanratetemp = new BigDecimal(0);
 		if (termday > 0) {
 			wanratetemp = totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).divide(new BigDecimal(365), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(termday));
@@ -131,13 +133,11 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 			wanratetemp = wanratetemp.add(totalrate.divide(new BigDecimal(100), 4, BigDecimal.ROUND_UP).multiply(new BigDecimal(10000)).multiply(new BigDecimal(termyear)));
 		}
 		wanrate = wanratetemp.intValue();
+		return wanrate;
 	}
 
-	public int getWanrate() {
-		if (wanrate < 1) {
-			setWanrate();
-		}
-		return wanrate;
+	public void setWanrate() {
+		getWanrate();
 	}
 
 	public BigDecimal getTotalmoney() {
@@ -148,7 +148,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.totalmoney = totalmoney;
 	}
 
-	@Length(min = 0, max = 50, message = "周期长度必须介于 0 和 50 之间")
+	@Length(min = 0, max = 50, message = "期限长度必须介于 0 和 50 之间")
 	public String getTerm() {
 		return term;
 	}
@@ -157,27 +157,27 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.term = term;
 	}
 
-	public int getTermday() {
+	public Integer getTermday() {
 		return termday;
 	}
 
-	public void setTermday(int termday) {
+	public void setTermday(Integer termday) {
 		this.termday = termday;
 	}
 
-	public int getTermmonth() {
+	public Integer getTermmonth() {
 		return termmonth;
 	}
 
-	public void setTermmonth(int termmonth) {
+	public void setTermmonth(Integer termmonth) {
 		this.termmonth = termmonth;
 	}
 
-	public int getTermyear() {
+	public Integer getTermyear() {
 		return termyear;
 	}
 
-	public void setTermyear(int termyear) {
+	public void setTermyear(Integer termyear) {
 		this.termyear = termyear;
 	}
 
@@ -187,6 +187,15 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 
 	public void setSchedule(float schedule) {
 		this.schedule = schedule;
+	}
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	public Date getStarttime() {
+		return starttime;
+	}
+
+	public void setStarttime(Date starttime) {
+		this.starttime = starttime;
 	}
 
 	@Length(min = 0, max = 50, message = "计息时间长度必须介于 0 和 50 之间")
@@ -216,7 +225,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.repaydate = repaydate;
 	}
 
-	@Length(min = 0, max = 1, message = "是否转让长度必须介于 0 和 1 之间")
+	@Length(min = 0, max = 1, message = "是否转让标长度必须介于 0 和 1 之间")
 	public String getIstransfer() {
 		return istransfer;
 	}
@@ -225,7 +234,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.istransfer = istransfer;
 	}
 
-	@Length(min = 0, max = 1, message = "允许转让长度必须介于 0 和 1 之间")
+	@Length(min = 0, max = 1, message = "是否允许转让长度必须介于 0 和 1 之间")
 	public String getAllowtransfer() {
 		return allowtransfer;
 	}
@@ -234,7 +243,7 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 		this.allowtransfer = allowtransfer;
 	}
 
-	@Length(min = 0, max = 200, message = "转让注意事项长度必须介于 0 和 200 之间")
+	@Length(min = 0, max = 200, message = "装让说明长度必须介于 0 和 200 之间")
 	public String getTransfernotice() {
 		return transfernotice;
 	}
@@ -259,21 +268,6 @@ public class Cp2pProducts extends DataEntity<Cp2pProducts> {
 
 	public void setIsguarantee(String isguarantee) {
 		this.isguarantee = isguarantee;
-	}
-
-	@Override
-	public void preInsert() {
-		// TODO Auto-generated method stub
-		super.preInsert();
-		createBy = UserUtils.get("taskparser");
-		updateBy = UserUtils.get("taskparser");
-		getWanrate();//项目结束万份收益，通过计算
-	}
-
-	@Override
-	public void preUpdate() {
-		// TODO Auto-generated method stub
-		super.preUpdate();
 	}
 
 }

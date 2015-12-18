@@ -3,8 +3,6 @@
  */
 package com.thinkgem.jeesite.modules.p2p.web;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,13 +19,15 @@ import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.thinkgem.jeesite.modules.p2p.entity.Cp2pPlatform;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
+import com.thinkgem.jeesite.modules.p2p.service.Cp2pPlatformService;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
 
 /**
  * p2p产品系列Controller
  * @author xiang
- * @version 2015-12-12
+ * @version 2015-12-18
  */
 @Controller
 @RequestMapping(value = "${adminPath}/p2p/cp2pSeries")
@@ -35,6 +35,8 @@ public class Cp2pSeriesController extends BaseController {
 
 	@Autowired
 	private Cp2pSeriesService cp2pSeriesService;
+	@Autowired
+	private Cp2pPlatformService cp2pPlatformService;
 	
 	@ModelAttribute
 	public Cp2pSeries get(@RequestParam(required=false) String id) {
@@ -52,6 +54,7 @@ public class Cp2pSeriesController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(Cp2pSeries cp2pSeries, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<Cp2pSeries> page = cp2pSeriesService.findPage(new Page<Cp2pSeries>(request, response), cp2pSeries); 
+		model.addAttribute("cp2pPlatformList",cp2pPlatformService.findList(new Cp2pPlatform()));
 		model.addAttribute("page", page);
 		return "modules/p2p/cp2pSeriesList";
 	}
@@ -60,6 +63,7 @@ public class Cp2pSeriesController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(Cp2pSeries cp2pSeries, Model model) {
 		model.addAttribute("cp2pSeries", cp2pSeries);
+		model.addAttribute("cp2pPlatformList",cp2pPlatformService.findList(new Cp2pPlatform()));
 		return "modules/p2p/cp2pSeriesForm";
 	}
 
@@ -70,7 +74,7 @@ public class Cp2pSeriesController extends BaseController {
 			return form(cp2pSeries, model);
 		}
 		cp2pSeriesService.save(cp2pSeries);
-		addMessage(redirectAttributes, "保存产品系列成功");
+		addMessage(redirectAttributes, "保存p2p产品系列成功");
 		return "redirect:"+Global.getAdminPath()+"/p2p/cp2pSeries/?repage";
 	}
 	
@@ -78,25 +82,8 @@ public class Cp2pSeriesController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(Cp2pSeries cp2pSeries, RedirectAttributes redirectAttributes) {
 		cp2pSeriesService.delete(cp2pSeries);
-		addMessage(redirectAttributes, "删除产品系列成功");
+		addMessage(redirectAttributes, "删除p2p产品系列成功");
 		return "redirect:"+Global.getAdminPath()+"/p2p/cp2pSeries/?repage";
 	}
-	
-	/***
-	 * 获取加载select列表数据
-	 * @param cp2pSeries
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @return
-	 */
-	@RequiresPermissions("p2p:cp2pSeries:view")
-	@RequestMapping(value = {"selectList"})
-	public Model selectlistList(@RequestParam(required=false) String name, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Cp2pSeries cp2pSeries = new Cp2pSeries();
-		cp2pSeries.setName(name);
-		List<Cp2pSeries> cp2pSeriesList = cp2pSeriesService.findList(cp2pSeries); 
-		model.addAttribute("selectList", cp2pSeriesList);
-		return model;
-	}
+
 }

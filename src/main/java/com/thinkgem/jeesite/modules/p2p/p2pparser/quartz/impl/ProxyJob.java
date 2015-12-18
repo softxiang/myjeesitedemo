@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 //import org.quartz.JobExecutionException;
 
 import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.p2p.entity.Cp2pParserconfig;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
 
 public class ProxyJob {//implements Job {

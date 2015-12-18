@@ -1,18 +1,27 @@
 package com.thinkgem.jeesite.test;
 
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Test {
 
 	public static void main(String[] args) {
-		BigDecimal wanratetemp = new BigDecimal(0);
-		BigDecimal totalrate = new BigDecimal(12.00);
-		wanratetemp = totalrate.add(totalrate.divide(new BigDecimal(100)).multiply(new BigDecimal(10000)).divide(new BigDecimal(12)).multiply(new BigDecimal(6)));
-		System.out.println(wanratetemp.intValue());
-		
+		String txt="{cssExp}#regexp#";
+	    Pattern px = Pattern.compile("\\{(.*?)\\}#(.*?)#");
+	    Matcher mx = px.matcher(txt);
+	    if (mx.find())
+	    {
+	        String word1=mx.group(1);
+	        System.out.println(mx.group(0)+"("+word1.toString()+")"+mx.group(2));
+	    }
+		String str = "（%[GD1108010110000]（（）*[GD1108010111100]*+-";
+        Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(str);
+        while (m.find()) {
+            System.out.println(m.group(1));
+        }
 		/*Class clazz;
 		try {
 			System.err.println(Test.class.getClass().getClassLoader());
