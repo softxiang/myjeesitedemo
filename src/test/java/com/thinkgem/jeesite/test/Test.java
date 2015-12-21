@@ -3,41 +3,48 @@ package com.thinkgem.jeesite.test;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Test {
 
 	public static void main(String[] args) {
-		String txt="{cssExp}#regexp#";
-	    Pattern px = Pattern.compile("\\{(.*?)\\}#(.*?)#");
-	    Matcher mx = px.matcher(txt);
-	    if (mx.find())
-	    {
-	        String word1=mx.group(1);
-	        System.out.println(mx.group(0)+"("+word1.toString()+")"+mx.group(2));
-	    }
-		String str = "（%[GD1108010110000]（（）*[GD1108010111100]*+-";
-        Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(str);
-        while (m.find()) {
-            System.out.println(m.group(1));
-        }
-		/*Class clazz;
-		try {
-			System.err.println(Test.class.getClass().getClassLoader());
-			clazz = Class.forName("com.thinkgem.jeesite.modules.p2p.p2pquartz.parser.List5262Parser");
-			Method m = clazz.getDeclaredMethod("parser");
-			m.invoke(clazz.newInstance(), null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} */
+		// String str = "{td a}#(\\?|&)id=([^&?\"]*)#";
+//		String str = "{td a}##";
+//		Matcher m = Pattern.compile("\\{(.*?)\\}#(.*?)#").matcher(str);
+//		if (m.find()) {
+//			System.out.println(m.group(0) + ":" + m.group(1) + ":" + m.group(2));
+//			System.out.println(m.groupCount());
+//		} else {
+//			System.out.println("没找到");
+//		}
+
+		String str1 = "http://www.5262.com/product/detail.html?id=1078\"";
+		Pattern p1 = Pattern.compile("\\?id=(.*)\"");
+		Matcher m1 = p1.matcher(str1);
+		if (m1.find()) {
+			System.out.println(m1.group(0)+ "-" + m1.group(1));// + ":" + m1.group(2));
+			System.out.println(m1.groupCount());
+		} else {
+			System.out.println("没找到");
+		}
 		
+		System.out.println(Pattern.matches("\\?id=(.*?)", "?id=aaaaa"));
+		
+		/*
+		 * Class clazz; try {
+		 * System.err.println(Test.class.getClass().getClassLoader()); clazz =
+		 * Class.forName(
+		 * "com.thinkgem.jeesite.modules.p2p.p2pquartz.parser.List5262Parser");
+		 * Method m = clazz.getDeclaredMethod("parser");
+		 * m.invoke(clazz.newInstance(), null); } catch (Exception e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
+		 */
+
 		/***
 		 * 
-		Test t = new Test();
-		t.classLoad();
-		
+		 Test t = new Test(); t.classLoad();
 		 */
 	}
 
