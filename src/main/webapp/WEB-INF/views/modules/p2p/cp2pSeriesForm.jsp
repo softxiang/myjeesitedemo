@@ -86,7 +86,7 @@
 		<div class="control-group">
 			<label class="control-label">明细id表达式：</label>
 			<div class="controls">
-				<form:input path="detailidexp" htmlEscape="true" maxlength="500" class="input-xlarge "/>
+				<form:input path="detailidexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 				<span class="help-inline"><font color="">表达式:${cp2pSeries.detailidexp}</font> </span>
 			</div>
 		</div>

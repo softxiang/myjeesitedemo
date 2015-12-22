@@ -37,28 +37,26 @@ public class List5262ParserSpring {
 		log.info(getClass().getName() + "......start......");
 		try {
 			Cp2pSeries cp2pSeries = cp2pSeriesService.get(new Cp2pSeries(cp2pSeriesId));
-			// {cssExp}#regexp#
-			String listCSSExp = "";
-			Pattern p = Pattern.compile("\\{(.*?)\\}#(.*?)#");
-			//Matcher m = p.matcher(null != cp2pSeries.getListrootexp() ? cp2pSeries.getListrootexp().toString() : "");
+			// cssexp:css;regexp:reg;
 			//可能存在html " < >被转义 需反转义
-			Matcher m = p.matcher(StringEscapeUtils.unescapeHtml4(null != cp2pSeries.getListrootexp() ? cp2pSeries.getListrootexp().toString() : ""));
-			if (m.find()) {
+			//定位列表的css表达式
+			String listCSSExp = "";
+			Matcher m = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getListrootexp()));
+			if (m.find()&&m.groupCount()>0) {
 				listCSSExp = m.group(1).trim();
 			}
 			// 详细页URI前缀
-			String detailURIPrefix = StringEscapeUtils.unescapeHtml4(null != cp2pSeries.getDetailprefix() ? cp2pSeries.getDetailprefix().toString() : "");
-			// {cssExp}#regexp#
+			String detailURIPrefix = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailprefix());
+			//获取id
+			//id css定位表达式
 			String idCSSExp = "";
+			//获取id正则
 			String idRegExp = "";
-			Pattern idp = Pattern.compile("\\{(.*?)\\}#(.*?)#");
-			String detailidexp = null != cp2pSeries.getDetailidexp() ? cp2pSeries.getDetailidexp().toString(): "";
-			Matcher idm = idp.matcher(detailidexp);
-			if (idm.find()) {
+			Matcher idm = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getDetailidexp()));
+			if (idm.find()&&idm.groupCount()>1) {
 				idCSSExp = idm.group(1).trim();
 				idRegExp = idm.group(2).trim();
 			}
-			idRegExp = StringEscapeUtils.unescapeHtml4(idRegExp);
 			if (StringUtils.isBlank(listCSSExp) || StringUtils.isBlank(detailURIPrefix) || StringUtils.isBlank(idCSSExp) || StringUtils.isBlank(idRegExp)) {
 				throw new InvalidParameterException("参数错误！");
 			}
@@ -111,7 +109,7 @@ class Detail5262Parser implements Runnable {
 	private Cp2pSeries cp2pSeries;
 	private Cp2pProductsService cp2pProductsService;
 
-	public Detail5262Parser(String sid,String detailurl,Cp2pSeries cp2pSeries,Cp2pProductsService cp2pProductsService) {
+	public Detail5262Parser(String sid, String detailurl, Cp2pSeries cp2pSeries, Cp2pProductsService cp2pProductsService) {
 		this.sid = sid;
 		this.detailurl = detailurl;
 		this.cp2pSeries = cp2pSeries;
@@ -132,8 +130,8 @@ class Detail5262Parser implements Runnable {
 			// 合同编号
 			Matcher m = p.matcher(StringEscapeUtils.unescapeHtml4(null != cp2pSeries.getSnumexp() ? cp2pSeries.getSnumexp().toString() : ""));
 			if (m.find()) {
-				cssExp = cssExp.append(StringUtils.isBlank(m.group(1))?"":m.group(1).trim());
-				regExp = regExp.append(StringUtils.isBlank(m.group(2))?"":m.group(2).trim());
+				cssExp = cssExp.append(StringUtils.isBlank(m.group(1)) ? "" : m.group(1).trim());
+				regExp = regExp.append(StringUtils.isBlank(m.group(2)) ? "" : m.group(2).trim());
 			}
 			Elements snumEles = doc.select(cssExp.toString());
 			String snum = "";
@@ -146,12 +144,12 @@ class Detail5262Parser implements Runnable {
 					snum = tempm.group(1).trim();
 				}
 			}
-			if(StringUtils.isBlank(snum)){
+			if (StringUtils.isBlank(snum)) {
 				log.warn("未获取到合同编号：" + detailurl);
 			}
 			cp2pProducts.setSnum(snum);
 			System.err.println(cp2pProducts.getSnum());
-			//cp2pProductsService.save(cp2pProducts);
+			// cp2pProductsService.save(cp2pProducts);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

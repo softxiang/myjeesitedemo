@@ -7,31 +7,38 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 public class Test {
 
 	public static void main(String[] args) {
 		// String str = "{td a}#(\\?|&)id=([^&?\"]*)#";
-//		String str = "{td a}##";
-//		Matcher m = Pattern.compile("\\{(.*?)\\}#(.*?)#").matcher(str);
-//		if (m.find()) {
-//			System.out.println(m.group(0) + ":" + m.group(1) + ":" + m.group(2));
-//			System.out.println(m.groupCount());
-//		} else {
-//			System.out.println("没找到");
-//		}
+		// String str = "{td a}##";
+		// Matcher m = Pattern.compile("\\{(.*?)\\}#(.*?)#").matcher(str);
+		// if (m.find()) {
+		// System.out.println(m.group(0) + ":" + m.group(1) + ":" + m.group(2));
+		// System.out.println(m.groupCount());
+		// } else {
+		// System.out.println("没找到");
+		// }
 
-		String str1 = "http://www.5262.com/product/detail.html?id=1078\"";
-		Pattern p1 = Pattern.compile("\\?id=(.*)\"");
+		//String str1 = "http://www.5262.com/product/detail.html?id=1078\"";
+		//Pattern p1 = Pattern.compile("[\\?|&]id=(.*)\"");
+		String str1 = "?id=[.#内容#\"";
+		//([{\^-$|}])?*+.
+		Pattern p1 = Pattern.compile("[\\(\\[\\{\\\\\\^\\-\\$\\|\\}\\]\\)\\?\\*\\+\\.]*+"); 
 		Matcher m1 = p1.matcher(str1);
 		if (m1.find()) {
-			System.out.println(m1.group(0)+ "-" + m1.group(1));// + ":" + m1.group(2));
+			System.out.println(m1.group());
+			System.out.println("replaceAll:"+m1.replaceAll("\\\\\\\\"+m1.group()));
+			System.out.println(str1);
+			System.out.println(m1.group(0) + "-" + m1.group(1));//+":" + m1.group(2));
 			System.out.println(m1.groupCount());
 		} else {
 			System.out.println("没找到");
 		}
-		
-		System.out.println(Pattern.matches("\\?id=(.*?)", "?id=aaaaa"));
-		
+
+
 		/*
 		 * Class clazz; try {
 		 * System.err.println(Test.class.getClass().getClassLoader()); clazz =

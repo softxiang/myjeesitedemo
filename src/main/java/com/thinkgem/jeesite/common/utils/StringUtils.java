@@ -384,4 +384,31 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     	return result.toString();
     }
     
+    /**
+     * <p>将编码过的html字符串反编码，如果为null或者为空字符串则返回""</p>
+     * 如 &amp;lt;test&amp;gt;将转换为&lt;test&gt</br>
+     * null或全部为空的字符串将转换为""</br>
+     * 头尾带空格的字符串先反编码后在trim," &amp;lt;test&amp;gt; "将转换为&lt;test&gt
+     * @param input  the {@code String} to unescape, may be null
+     * @return a new unescaped {@code String}, {@code ""} if null string input
+     */
+    public static String unescapeHtml4Default(final CharSequence input){
+    	return StringEscapeUtils.unescapeHtml4(StringUtils.defaultIfBlank(input, "").toString().trim());
+    }
+    /**
+     * <p>将表达式中存在元字符的替换为\\元字符</p>
+     * 如 &amp;lt;test&amp;gt;将转换为&lt;test&gt</br>
+     * null或全部为空的字符串将转换为""</br>
+     * 头尾带空格的字符串先反编码后在trim," &amp;lt;test&amp;gt; "将转换为&lt;test&gt
+     * @param input  the {@code String} to unescape, may be null
+     * @return a new unescaped {@code String}, {@code ""} if null string input
+     */
+    public static String convertRegExp(final CharSequence regStr){
+    	//正则表达式元字符 ([{\^-$|}])?*+.
+    	Matcher m1 = Pattern.compile("[\\(\\[\\{\\\\\\^\\-\\$\\|\\}\\]\\)\\?\\*\\+\\.]").matcher(regStr);
+    	if(m1.find()){
+    		
+    	}
+    	return "";
+    }
 }
