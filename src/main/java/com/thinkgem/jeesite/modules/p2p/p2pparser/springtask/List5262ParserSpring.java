@@ -5,7 +5,6 @@ import java.security.InvalidParameterException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,6 +26,8 @@ import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
 public class List5262ParserSpring {
 	public final Logger log = Logger.getLogger(getClass());
 	private final String cp2pSeriesId = "0bb8a96c2ac6404b9f086a8c5a6f85ef";
+	private final String contentPlaceHolder = "#内容#";// 不能包含正则表达式元字符([{\^-$|}])?*+.
+	private final String defaultRegExp = "cssexp:(.*?);regexp:(.*?);";
 	@Autowired
 	private Cp2pSeriesService cp2pSeriesService;
 	@Autowired
@@ -38,24 +39,25 @@ public class List5262ParserSpring {
 		try {
 			Cp2pSeries cp2pSeries = cp2pSeriesService.get(new Cp2pSeries(cp2pSeriesId));
 			// cssexp:css;regexp:reg;
-			//可能存在html " < >被转义 需反转义
-			//定位列表的css表达式
+			// 可能存在html " < >被转义 需反转义
+			// 定位列表的css表达式
 			String listCSSExp = "";
-			Matcher m = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getListrootexp()));
-			if (m.find()&&m.groupCount()>0) {
+			Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getListrootexp()));
+			if (m.find() && m.groupCount() > 0) {
 				listCSSExp = m.group(1).trim();
 			}
 			// 详细页URI前缀
 			String detailURIPrefix = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailprefix());
-			//获取id
-			//id css定位表达式
+			// 获取id
+			// id css定位表达式
 			String idCSSExp = "";
-			//获取id正则
+			// 获取id正则
 			String idRegExp = "";
-			Matcher idm = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getDetailidexp()));
-			if (idm.find()&&idm.groupCount()>1) {
+			String detailidexp = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailidexp());
+			Matcher idm = Pattern.compile(defaultRegExp).matcher(detailidexp);
+			if (idm.find() && idm.groupCount() > 1) {
 				idCSSExp = idm.group(1).trim();
-				idRegExp = idm.group(2).trim();
+				idRegExp = StringUtils.convertRegExp(idm.group(2).trim());
 			}
 			if (StringUtils.isBlank(listCSSExp) || StringUtils.isBlank(detailURIPrefix) || StringUtils.isBlank(idCSSExp) || StringUtils.isBlank(idRegExp)) {
 				throw new InvalidParameterException("参数错误！");
@@ -63,7 +65,7 @@ public class List5262ParserSpring {
 			int pageMax = 1;// cp2pSeries.getPagemax();
 			int curPage = 1;
 			for (; curPage <= pageMax; curPage++) {
-				StringBuffer uri = new StringBuffer(StringEscapeUtils.unescapeHtml4(null != cp2pSeries.getListuri() ? cp2pSeries.getListuri().toString() : ""));
+				StringBuffer uri = new StringBuffer(StringUtils.unescapeHtml4Default(cp2pSeries.getListuri()));
 				if (!uri.toString().endsWith("&")) {
 					uri.append("&");
 				}
@@ -75,20 +77,19 @@ public class List5262ParserSpring {
 				Elements listtr = doc.select(listCSSExp);
 				for (Element tr : listtr) {
 					Elements idtds = tr.select(idCSSExp);
-					Element idtd = null!=idtds&&idtds.size()>0?idtds.get(0):null;
-					String idStrTemp = null!=idtd?idtd.toString().trim():"";
+					Element idtd = null != idtds && idtds.size() > 0 ? idtds.get(0) : null;
+					String idStrTemp = null != idtd ? idtd.toString().trim() : "";
 					String idStr = "";
-					Pattern idptn = Pattern.compile(idRegExp);
-					Matcher idmhr = idptn.matcher(idStrTemp);
-					if (idmhr.find()) {
-						idStr = idmhr.group(2).trim();
+					Matcher idmhr = Pattern.compile(StringUtils.getRegExp(idRegExp, contentPlaceHolder)).matcher(idStrTemp);
+					if (idmhr.find() && idmhr.groupCount() > 0) {
+						idStr = idmhr.group(1).trim();
 					}
-					if(StringUtils.isBlank(idStr)){
+					if (StringUtils.isBlank(idStr)) {
 						throw new InvalidParameterException("获取详细页ID元素错误！");
 					}
-					String detailurl = detailURIPrefix.replaceAll("\\$\\{id\\}", idStr);
+					String detailurl = detailURIPrefix.replaceAll("#id#", idStr);
 					if (!StringUtils.isBlank(detailurl)) {
-						Detail5262Parser detail5262Parser = new Detail5262Parser(idStr,detailurl,cp2pSeries,cp2pProductsService);
+						Detail5262Parser detail5262Parser = new Detail5262Parser(idStr, detailurl, cp2pSeries, cp2pProductsService);
 						Thread thread = new Thread(detail5262Parser);
 						thread.start();
 					}
@@ -104,6 +105,8 @@ public class List5262ParserSpring {
 
 class Detail5262Parser implements Runnable {
 	public final Logger log = Logger.getLogger(getClass());
+	private final String contentPlaceHolder = "#内容#";// 不能包含正则表达式元字符([{\^-$|}])?*+.
+	private final String defaultRegExp = "cssexp:(.*?);regexp:(.*?);";
 	private String sid;
 	private String detailurl;
 	private Cp2pSeries cp2pSeries;
@@ -126,12 +129,14 @@ class Detail5262Parser implements Runnable {
 			cp2pProducts.setDetailuri(detailurl);
 			StringBuffer cssExp = new StringBuffer();
 			StringBuffer regExp = new StringBuffer();
-			Pattern p = Pattern.compile("\\{(.*?)\\}#(.*?)#");
+			Pattern p = Pattern.compile(defaultRegExp);
 			// 合同编号
-			Matcher m = p.matcher(StringEscapeUtils.unescapeHtml4(null != cp2pSeries.getSnumexp() ? cp2pSeries.getSnumexp().toString() : ""));
-			if (m.find()) {
-				cssExp = cssExp.append(StringUtils.isBlank(m.group(1)) ? "" : m.group(1).trim());
-				regExp = regExp.append(StringUtils.isBlank(m.group(2)) ? "" : m.group(2).trim());
+			Matcher m = p.matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getSnumexp()));
+			if (m.find() && 2 == m.groupCount()) {
+				cssExp = cssExp.append(StringUtils.defaultIfBlank(m.group(1), "").trim());
+				regExp = regExp.append(StringUtils.defaultIfBlank(m.group(2), "").trim());
+			} else {
+				throw new InvalidParameterException("平台采集规则配置错误!" + detailurl);
 			}
 			Elements snumEles = doc.select(cssExp.toString());
 			String snum = "";
