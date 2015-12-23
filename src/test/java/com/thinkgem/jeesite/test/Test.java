@@ -13,11 +13,13 @@ import com.thinkgem.jeesite.common.utils.StringUtils;
 public class Test {
 
 	public static void main(String[] args) {
-		String str = "cssexp:xxxx;";
-		// String str = "{td a}##";
-		Matcher m = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(str);
+		//String str = "cssexp:xxxx;";
+		//Matcher m = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(str);
+		String str = "<span class=\"fn-l\">产品编号 : HZ151219112502 <i class=\"turn-ico\"></i> </span>";
+		Matcher m = Pattern.compile("产品编号 : (.*?) ").matcher(str);
+		
 		if (m.find()) {
-			System.out.println(m.group(0) + ":" + m.group(1) + ":" + m.group(2));
+			System.out.println(m.group(0) + ":" + m.group(1)) ;//+ ":" + m.group(2));
 			System.out.println(m.groupCount());
 		} else {
 			System.out.println("没找到");

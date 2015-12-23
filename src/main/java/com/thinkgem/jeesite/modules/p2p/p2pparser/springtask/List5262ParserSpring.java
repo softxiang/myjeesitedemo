@@ -1,6 +1,7 @@
 package com.thinkgem.jeesite.modules.p2p.p2pparser.springtask;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.thinkgem.jeesite.common.utils.ObjectUtils;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pProducts;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
@@ -44,7 +46,7 @@ public class List5262ParserSpring {
 			String listCSSExp = "";
 			Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getListrootexp()));
 			if (m.find() && m.groupCount() > 0) {
-				listCSSExp = m.group(1).trim();
+				listCSSExp = m.group(1);
 			}
 			// 详细页URI前缀
 			String detailURIPrefix = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailprefix());
@@ -56,8 +58,8 @@ public class List5262ParserSpring {
 			String detailidexp = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailidexp());
 			Matcher idm = Pattern.compile(defaultRegExp).matcher(detailidexp);
 			if (idm.find() && idm.groupCount() > 1) {
-				idCSSExp = idm.group(1).trim();
-				idRegExp = StringUtils.convertRegExp(idm.group(2).trim());
+				idCSSExp = idm.group(1);
+				idRegExp = StringUtils.convertRegExp(idm.group(2));
 			}
 			if (StringUtils.isBlank(listCSSExp) || StringUtils.isBlank(detailURIPrefix) || StringUtils.isBlank(idCSSExp) || StringUtils.isBlank(idRegExp)) {
 				throw new InvalidParameterException("参数错误！");
@@ -72,17 +74,17 @@ public class List5262ParserSpring {
 				uri.append(cp2pSeries.getPageattr());
 				uri.append("=");
 				uri.append(curPage);
-				Document doc = Jsoup.connect(uri.toString()).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").get();
+				Document doc = Jsoup.connect(uri.toString()).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").timeout(5000).get();
 				// 数据tr列表
 				Elements listtr = doc.select(listCSSExp);
 				for (Element tr : listtr) {
 					Elements idtds = tr.select(idCSSExp);
 					Element idtd = null != idtds && idtds.size() > 0 ? idtds.get(0) : null;
-					String idStrTemp = null != idtd ? idtd.toString().trim() : "";
+					String idStrTemp = null != idtd ? idtd.toString() : "";
 					String idStr = "";
 					Matcher idmhr = Pattern.compile(StringUtils.getRegExp(idRegExp, contentPlaceHolder)).matcher(idStrTemp);
 					if (idmhr.find() && idmhr.groupCount() > 0) {
-						idStr = idmhr.group(1).trim();
+						idStr = idmhr.group(1);
 					}
 					if (StringUtils.isBlank(idStr)) {
 						throw new InvalidParameterException("获取详细页ID元素错误！");
@@ -111,8 +113,9 @@ class Detail5262Parser implements Runnable {
 	private String detailurl;
 	private Cp2pSeries cp2pSeries;
 	private Cp2pProductsService cp2pProductsService;
+	private Document doc;
 
-	public Detail5262Parser(String sid, String detailurl, Cp2pSeries cp2pSeries, Cp2pProductsService cp2pProductsService) {
+	public Detail5262Parser(String sid, String detailurl, Cp2pSeries cp2pSeries, Cp2pProductsService cp2pProductsService) throws IOException {
 		this.sid = sid;
 		this.detailurl = detailurl;
 		this.cp2pSeries = cp2pSeries;
@@ -123,41 +126,67 @@ class Detail5262Parser implements Runnable {
 	public void run() {
 		log.info(getClass().getName() + "......start......");
 		try {
-			Document doc = Jsoup.connect(detailurl).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").get();
+			doc = Jsoup.connect(detailurl).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").timeout(5000).get();
 			Cp2pProducts cp2pProducts = new Cp2pProducts();
 			cp2pProducts.setSid(sid);
 			cp2pProducts.setDetailuri(detailurl);
-			StringBuffer cssExp = new StringBuffer();
-			StringBuffer regExp = new StringBuffer();
-			Pattern p = Pattern.compile(defaultRegExp);
 			// 合同编号
-			Matcher m = p.matcher(StringUtils.unescapeHtml4Default(cp2pSeries.getSnumexp()));
-			if (m.find() && 2 == m.groupCount()) {
-				cssExp = cssExp.append(StringUtils.defaultIfBlank(m.group(1), "").trim());
-				regExp = regExp.append(StringUtils.defaultIfBlank(m.group(2), "").trim());
-			} else {
-				throw new InvalidParameterException("平台采集规则配置错误!" + detailurl);
-			}
-			Elements snumEles = doc.select(cssExp.toString());
-			String snum = "";
-			if (1 == snumEles.size()) {
-				Element snumEle = snumEles.get(0);
-				String tempStr = null == snumEle ? "" : snumEle.toString().trim();
-				Pattern tempp = Pattern.compile(regExp.toString());
-				Matcher tempm = tempp.matcher(tempStr);
-				if (tempm.find()) {
-					snum = tempm.group(1).trim();
-				}
-			}
-			if (StringUtils.isBlank(snum)) {
-				log.warn("未获取到合同编号：" + detailurl);
-			}
+			String snum = getContent("合同编号", cp2pSeries.getSnumexp());
 			cp2pProducts.setSnum(snum);
-			System.err.println(cp2pProducts.getSnum());
+			log.debug("产品编号:" + cp2pProducts.getSnum());
+
+			// 名称
+			String name = getContent("产品名称", cp2pSeries.getNameexp());
+			cp2pProducts.setName(name);
+			log.debug("产品名称:" + cp2pProducts.getName());
+
+			// 利率
+			String rate = getContent("利率", cp2pSeries.getRateexp());
+			BigDecimal rateDecimal = new BigDecimal(0);
+			rateDecimal = rateDecimal.add(new BigDecimal(rate));
+			cp2pProducts.setRate(rateDecimal);
+			log.debug("利率:" + cp2pProducts.getRate());
+
+			// 平台利率
+			String platformrate = getContent("平台利率", cp2pSeries.getPlatformrateexp());
+			BigDecimal platformrateDecimal = new BigDecimal(0);
+			platformrateDecimal = platformrateDecimal.add(new BigDecimal(platformrate));
+			cp2pProducts.setRate(rateDecimal);
+			log.debug("平台利率:" + cp2pProducts.getRate());
 			// cp2pProductsService.save(cp2pProducts);
 		} catch (IOException e) {
+			System.out.println("---------------------");
 			e.printStackTrace();
 		}
 		log.info(getClass().getName() + "......end......");
+	}
+
+	public String getContent(final String fieldComment, final String fieldExp) {
+		String temp = StringUtils.defaultIfBlank(fieldExp, "").trim();
+		String result = "";
+		if (StringUtils.isNotBlank(fieldComment) && StringUtils.isNotBlank(temp)) {
+			StringBuffer cssExp = new StringBuffer();
+			StringBuffer regExp = new StringBuffer();
+			Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(fieldExp));
+			if (m.find() && 2 == m.groupCount()) {
+				cssExp = cssExp.append(StringUtils.defaultIfBlank(m.group(1), ""));
+				regExp = regExp.append(StringUtils.getRegExp(StringUtils.defaultIfBlank(m.group(2), ""), contentPlaceHolder));
+			} else {
+				throw new InvalidParameterException(fieldComment + "采集规则配置错误!" + detailurl);
+			}
+			Elements eles = doc.select(cssExp.toString());
+			if (1 == eles.size()) {
+				Element ele = eles.get(0);
+				String tempStr = ObjectUtils.defaultIfNull(ele, "").toString();
+				Matcher tempm = Pattern.compile(regExp.toString()).matcher(tempStr);
+				if (tempm.find()) {
+					result = StringUtils.defaultIfBlank(tempm.group(1), "").trim();
+				}
+			}
+			if (StringUtils.isBlank(result)) {
+				log.debug("未获取到" + fieldComment + "：" + detailurl);
+			}
+		}
+		return result;
 	}
 }

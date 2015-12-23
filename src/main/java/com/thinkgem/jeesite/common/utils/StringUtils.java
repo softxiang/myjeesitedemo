@@ -407,7 +407,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return a new unescaped {@code String}, {@code ""} if null string input
 	 */
 	public static String unescapeHtml4Default(final CharSequence input) {
-		return StringEscapeUtils.unescapeHtml4(StringUtils.defaultIfBlank(input, "").toString().trim());
+		return StringEscapeUtils.unescapeHtml4(StringUtils.defaultIfBlank(input, "").toString());
 	}
 
 	/**
