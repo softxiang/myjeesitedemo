@@ -24,12 +24,13 @@ public class Cp2pSeries extends DataEntity<Cp2pSeries> {
 	private String listdatatype;		// 返回结果类型
 	private String listrootexp;		// 列表获取表达式
 	private String detailidexp;		// 明细id表达式
+	private String listscheduleexp;		//列表进度表达式
 	private String detailprefix;		// 详细页前缀
 	private String snumexp;		// 项目编号表达式
 	private String nameexp;		// 名称表达式
 	private String rateexp;		// 利率表达式
 	private String platformrateexp;		// 平台利率表达式
-	private String totolmoneyexp;		// 总金额表达式
+	private String totalmoneyexp;		// 总金额表达式
 	private String termexp;		// 期限表达式
 	private String scheduleexp;		// 进度表达式
 	private String starttimeexp;		// 开始日期表达式
@@ -109,7 +110,16 @@ public class Cp2pSeries extends DataEntity<Cp2pSeries> {
 	public void setListrootexp(String listrootexp) {
 		this.listrootexp = listrootexp;
 	}
-	
+
+	@Length(min=0, max=500, message="列表进度表达式长度必须介于 0 和 500 之间")
+	public String getListscheduleexp() {
+		return listscheduleexp;
+	}
+
+	public void setListscheduleexp(String listscheduleexp) {
+		this.listscheduleexp = listscheduleexp;
+	}
+
 	@Length(min=0, max=500, message="明细id表达式长度必须介于 0 和 500 之间")
 	public String getDetailidexp() {
 		return detailidexp;
@@ -165,12 +175,12 @@ public class Cp2pSeries extends DataEntity<Cp2pSeries> {
 	}
 	
 	@Length(min=0, max=500, message="总金额表达式长度必须介于 0 和 500 之间")
-	public String getTotolmoneyexp() {
-		return totolmoneyexp;
+	public String getTotalmoneyexp() {
+		return totalmoneyexp;
 	}
 
-	public void setTotolmoneyexp(String totolmoneyexp) {
-		this.totolmoneyexp = totolmoneyexp;
+	public void setTotalmoneyexp(String totalmoneyexp) {
+		this.totalmoneyexp = totalmoneyexp;
 	}
 	
 	@Length(min=0, max=500, message="期限表达式长度必须介于 0 和 500 之间")

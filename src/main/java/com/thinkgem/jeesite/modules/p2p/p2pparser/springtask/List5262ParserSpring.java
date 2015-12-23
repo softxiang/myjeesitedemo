@@ -3,9 +3,11 @@ package com.thinkgem.jeesite.modules.p2p.p2pparser.springtask;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.thinkgem.jeesite.common.utils.DateUtils;
 import com.thinkgem.jeesite.common.utils.ObjectUtils;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pProducts;
@@ -52,15 +55,10 @@ public class List5262ParserSpring {
 			String detailURIPrefix = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailprefix());
 			// 获取id
 			// id css定位表达式
-			String idCSSExp = "";
+			String idCSSExp = getCssExp(cp2pSeries.getDetailidexp());
 			// 获取id正则
-			String idRegExp = "";
-			String detailidexp = StringUtils.unescapeHtml4Default(cp2pSeries.getDetailidexp());
-			Matcher idm = Pattern.compile(defaultRegExp).matcher(detailidexp);
-			if (idm.find() && idm.groupCount() > 1) {
-				idCSSExp = idm.group(1);
-				idRegExp = StringUtils.convertRegExp(idm.group(2));
-			}
+			String idRegExp = getRegExp(cp2pSeries.getDetailidexp());
+
 			if (StringUtils.isBlank(listCSSExp) || StringUtils.isBlank(detailURIPrefix) || StringUtils.isBlank(idCSSExp) || StringUtils.isBlank(idRegExp)) {
 				throw new InvalidParameterException("参数错误！");
 			}
@@ -90,18 +88,77 @@ public class List5262ParserSpring {
 						throw new InvalidParameterException("获取详细页ID元素错误！");
 					}
 					String detailurl = detailURIPrefix.replaceAll("#id#", idStr);
-					if (!StringUtils.isBlank(detailurl)) {
-						Detail5262Parser detail5262Parser = new Detail5262Parser(idStr, detailurl, cp2pSeries, cp2pProductsService);
-						Thread thread = new Thread(detail5262Parser);
-						thread.start();
+					if (StringUtils.isNotBlank(detailurl)) {
+						Cp2pProducts entity = new Cp2pProducts();
+						entity.setCp2pSeries(new Cp2pSeries(cp2pSeriesId));
+						entity.setDetailuri(detailurl);
+						Cp2pProducts cp2pProduct = ObjectUtils.defaultIfNull(cp2pProductsService.get(entity), new Cp2pProducts());
+						// 不存在去取
+						if (StringUtils.isBlank(cp2pProduct.getId())) {
+							Detail5262Parser detail5262Parser = new Detail5262Parser(idStr, detailurl, cp2pSeries, cp2pProductsService);
+							Thread thread = new Thread(detail5262Parser);
+							thread.start();
+						} else if (StringUtils.isNotBlank(cp2pProduct.getId()) && cp2pProduct.getSchedule() != 100f) {
+							// 更新
+							String listschedulecss = getCssExp(cp2pSeries.getListscheduleexp());
+							String listschedulereg = getRegExp(cp2pSeries.getListscheduleexp());
+							if (StringUtils.isBlank(listschedulecss) || StringUtils.isBlank(listschedulereg)) {
+								throw new InvalidParameterException("获取列表中的进度参数错误！");
+							}
+							Elements scheduletds = tr.select(listschedulecss);
+							Element scheduletd = null != scheduletds && scheduletds.size() > 0 ? scheduletds.get(0) : null;
+							String scheduleStr = null != scheduletd ? scheduletd.toString() : "";
+							Matcher schedulem = Pattern.compile(StringUtils.getRegExp(listschedulereg, contentPlaceHolder)).matcher(scheduleStr);
+							if (schedulem.find() && schedulem.groupCount() > 0) {
+								scheduleStr = schedulem.group(1);
+							}
+							float schedulef = 0.00f;
+							if (StringUtils.isNotBlank(scheduleStr)) {
+								scheduleStr = StringUtils.replaceHtml(scheduleStr);
+								try {
+									schedulef = Float.parseFloat(scheduleStr.replaceAll("[^\\d|.]*", "").trim());
+								} catch (Exception e) {
+									log.warn("列表进度格式化错误:" + scheduleStr + ";" + detailurl);
+								}
+							}
+							Cp2pProducts target = new Cp2pProducts();
+							try {
+								BeanUtils.copyProperties(target, cp2pProduct);
+								target.setSchedule(schedulef);
+								target.preUpdate();
+								cp2pProductsService.save(target);
+							} catch (Exception e) {
+								log.warn("已存在产品更新失败" + detailurl + ",原因:" + e.getLocalizedMessage());
+							}
+							log.debug("已存在产品更新成功" + detailurl);
+						}
+
 					}
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.warn(getClass().getName() + "出错，原因：" + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 		log.info(getClass().getName() + "......end......");
+	}
+
+	public String getCssExp(final String str) {
+		String result = "";
+		Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(str));
+		if (m.find() && m.groupCount() > 1) {
+			result = m.group(1);
+		}
+		return result;
+	}
+
+	public String getRegExp(final String str) {
+		String result = "";
+		Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(str));
+		if (m.find() && m.groupCount() > 1) {
+			result = StringUtils.convertRegExp(m.group(2));
+		}
+		return result;
 	}
 }
 
@@ -128,6 +185,10 @@ class Detail5262Parser implements Runnable {
 		try {
 			doc = Jsoup.connect(detailurl).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").timeout(5000).get();
 			Cp2pProducts cp2pProducts = new Cp2pProducts();
+			cp2pProducts.preInsert();
+			cp2pProducts.setIsNewRecord(true);
+
+			cp2pProducts.setCp2pSeries(cp2pSeries);
 			cp2pProducts.setSid(sid);
 			cp2pProducts.setDetailuri(detailurl);
 			// 合同编号
@@ -143,17 +204,138 @@ class Detail5262Parser implements Runnable {
 			// 利率
 			String rate = getContent("利率", cp2pSeries.getRateexp());
 			BigDecimal rateDecimal = new BigDecimal(0);
-			rateDecimal = rateDecimal.add(new BigDecimal(rate));
+			if (StringUtils.isNotBlank(rate)) {
+				try {
+					rateDecimal = rateDecimal.add(new BigDecimal(rate));
+				} catch (Exception e) {
+					log.warn("利率格式化错误:" + rate + ";" + detailurl);
+				}
+			}
 			cp2pProducts.setRate(rateDecimal);
 			log.debug("利率:" + cp2pProducts.getRate());
 
 			// 平台利率
 			String platformrate = getContent("平台利率", cp2pSeries.getPlatformrateexp());
 			BigDecimal platformrateDecimal = new BigDecimal(0);
-			platformrateDecimal = platformrateDecimal.add(new BigDecimal(platformrate));
-			cp2pProducts.setRate(rateDecimal);
-			log.debug("平台利率:" + cp2pProducts.getRate());
-			// cp2pProductsService.save(cp2pProducts);
+			if (StringUtils.isNotBlank(platformrate)) {
+				try {
+					platformrateDecimal = platformrateDecimal.add(new BigDecimal(platformrate));
+				} catch (Exception e) {
+					log.warn("平台利率格式化错误:" + platformrate + ";" + detailurl);
+				}
+			}
+			cp2pProducts.setPlatformrate(platformrateDecimal);
+			log.debug("平台利率:" + cp2pProducts.getPlatformrate());
+
+			// 总金额
+			String totalMoneyStr = getContent("融资金额", cp2pSeries.getTotalmoneyexp());
+			BigDecimal totalMoneyDecimal = new BigDecimal(0);
+			if (StringUtils.isNotBlank(totalMoneyStr)) {
+				try {
+					totalMoneyStr = StringUtils.replaceHtml(totalMoneyStr);
+					totalMoneyStr = totalMoneyStr.replaceAll("￥", "");
+					String totalMoney = totalMoneyStr.replaceAll("[^\\d|.]*", "");
+					if (-1 != totalMoneyStr.indexOf("千万")) {
+						totalMoneyDecimal = new BigDecimal(10000000).multiply(new BigDecimal(totalMoney));
+					} else if (-1 != totalMoneyStr.indexOf("百万")) {
+						totalMoneyDecimal = new BigDecimal(1000000).multiply(new BigDecimal(totalMoney));
+					} else if (-1 != totalMoneyStr.indexOf("十万")) {
+						totalMoneyDecimal = new BigDecimal(100000).multiply(new BigDecimal(totalMoney));
+					} else if (-1 != totalMoneyStr.indexOf("万")) {
+						totalMoneyDecimal = new BigDecimal(10000).multiply(new BigDecimal(totalMoney));
+					}
+				} catch (Exception e) {
+					log.warn("融资金额格式化错误:" + totalMoneyStr + ";" + detailurl);
+				}
+			}
+			cp2pProducts.setTotalmoney(totalMoneyDecimal);
+			log.debug("融资金额:" + cp2pProducts.getTotalmoney());
+
+			// 期限
+			String termStr = getContent("期限", cp2pSeries.getTermexp());
+			if (StringUtils.isNotBlank(termStr)) {
+				termStr = StringUtils.replaceHtml(termStr);
+				Integer termNum = 0;
+				try {
+					termNum = Integer.parseInt(termStr.replaceAll("[^\\d|.]*", "").trim());
+				} catch (Exception e) {
+					log.warn("融资金额格式化错误:" + rate + ";" + detailurl);
+				}
+				if (-1 != termStr.indexOf("年")) {
+					cp2pProducts.setTermmonth(termNum * 12);
+				} else if (-1 != termStr.indexOf("月")) {
+					cp2pProducts.setTermmonth(termNum);
+				} else if (-1 != termStr.indexOf("日") || -1 != termStr.indexOf("天")) {
+					cp2pProducts.setTermmonth(0);
+				}
+			}
+			cp2pProducts.setTerm(termStr);
+			log.debug("期限:" + cp2pProducts.getTerm() + "	" + cp2pProducts.getTermmonth() + "个月");
+
+			// 进度
+			String scheduleStr = getContent("进度", cp2pSeries.getScheduleexp());
+			float schedulef = 0.00f;
+			if (StringUtils.isNotBlank(scheduleStr)) {
+				scheduleStr = StringUtils.replaceHtml(scheduleStr);
+				try {
+					schedulef = Float.parseFloat(scheduleStr.replaceAll("[^\\d|.]*", "").trim());
+				} catch (Exception e) {
+					log.warn("进度格式化错误:" + scheduleStr + ";" + detailurl);
+				}
+			}
+			cp2pProducts.setSchedule(schedulef);
+			log.debug("进度:" + cp2pProducts.getSchedule());
+
+			// 开始时间
+			String starttimeStr = getContent("开始时间", cp2pSeries.getStarttimeexp());
+			Date starttime = new Date();
+			if (StringUtils.isNotBlank(starttimeStr)) {
+				starttimeStr = StringUtils.replaceHtml(starttimeStr);
+				try {
+					starttime = DateUtils.parseDate(starttimeStr);
+				} catch (Exception e) {
+					log.warn("开始时间格式化错误:" + starttimeStr + ";" + detailurl);
+				}
+			}
+			cp2pProducts.setStarttime(starttime);
+			log.debug("开始时间:" + cp2pProducts.getStarttime());
+
+			// 还款方式
+			String repaymode = getContent("还款方式", cp2pSeries.getRepaymodeexp());
+			cp2pProducts.setRepaymode(StringUtils.defaultIfBlank(repaymode, "未知，见详细页"));
+			log.debug("还款方式:" + cp2pProducts.getRepaymode());
+
+			// 还款日期
+			String repaydate = getContent("还款日期", cp2pSeries.getRepaydateexp());
+			cp2pProducts.setRepaydate(StringUtils.defaultIfBlank(repaydate, "未知，见详细页"));
+			log.debug("还款日期:" + cp2pProducts.getRepaydate());
+
+			// 是否转让标
+			String istransferStr = getContent("是否转让标", cp2pSeries.getIstransferexp());
+			cp2pProducts.setIstransfer(StringUtils.isBlank(istransferStr) ? "0" : "1");
+			log.debug("是否转让标:" + cp2pProducts.getIstransfer() + "		" + istransferStr);
+
+			// 是否允许转让
+			String allowtransferStr = getContent("是否允许转让", cp2pSeries.getAllowtransfer());
+			cp2pProducts.setAllowtransfer(StringUtils.isBlank(allowtransferStr) ? "0" : "1");
+			log.debug("是否允许转让:" + cp2pProducts.getAllowtransfer() + "		" + allowtransferStr);
+
+			// 转让说明
+			String transfernotice = getContent("转让说明", cp2pSeries.getTransfernoticeexp());
+			cp2pProducts.setTransfernotice(transfernotice);
+			log.debug("转让说明:" + cp2pProducts.getTransfernotice());
+
+			// 是否抵押
+			String ismortgageStr = getContent("是否抵押", cp2pSeries.getIsmortgageexp());
+			cp2pProducts.setIsmortgage(StringUtils.isBlank(ismortgageStr) ? "0" : "1");
+			log.debug("是否抵押:" + cp2pProducts.getIsmortgage());
+
+			// 是否担保
+			String isguaranteeStr = getContent("是否担保", cp2pSeries.getIsmortgageexp());
+			cp2pProducts.setIsguarantee(StringUtils.isBlank(isguaranteeStr) ? "0" : "1");
+			log.debug("是否担保:" + cp2pProducts.getIsguarantee());
+
+			cp2pProductsService.save(cp2pProducts);
 		} catch (IOException e) {
 			System.out.println("---------------------");
 			e.printStackTrace();

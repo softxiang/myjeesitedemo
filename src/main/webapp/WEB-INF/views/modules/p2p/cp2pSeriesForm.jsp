@@ -80,7 +80,7 @@
 			<label class="control-label">列表获取表达式：</label>
 			<div class="controls">
 				<form:input path="listrootexp" htmlEscape="false" maxlength="200" class="input-xlarge "/>
-				<span class="help-inline"><font color="">表达式:{cssExp}#regex#</font> </span>
+				<span class="help-inline"><font color="">表达式:cssexp:css;regexp:xxx#内容#xxx;</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -88,6 +88,13 @@
 			<div class="controls">
 				<form:input path="detailidexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 				<span class="help-inline"><font color="">表达式:${cp2pSeries.detailidexp}</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">列表进度表达式：</label>
+			<div class="controls">
+				<form:input path="listscheduleexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<span class="help-inline"><font color="">表达式:${cp2pSeries.listscheduleexp}</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -123,7 +130,7 @@
 		<div class="control-group">
 			<label class="control-label">总金额表达式：</label>
 			<div class="controls">
-				<form:input path="totolmoneyexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="totalmoneyexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">

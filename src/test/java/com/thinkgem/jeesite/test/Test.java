@@ -30,6 +30,24 @@ public class Test {
 		String str1 = "?id=[.#内容#\"";
 		// ([{\^-$|}])?*+.
 		System.out.println(StringUtils.convertRegExp(str1));
+		
+		
+		String str2 = "<p><em>￥200.00</em>万</p>";
+		System.out.println("HTML:"+StringUtils.replaceHtml(str2));
+		
+		
+		String str3 = "￥200.00万";
+		Matcher m3 = Pattern.compile("[^\\d|.]*").matcher(str3);
+		if(m3.find()){
+			System.out.println("str3:"+m3.group());
+		}
+		
+		String str4 = "15.00年2个月";
+		Matcher m4 = Pattern.compile("(\\d.+)月").matcher(str4);
+		if(m4.find()){
+			System.out.println("str4:"+m4.group()+"---"+m4.group(1));
+		}
+		
 		// aaaa();
 		/*
 		 * Class clazz; try {

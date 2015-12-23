@@ -89,8 +89,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 			return "";
 		}
 		String regEx = "<.+?>";
-		Pattern p = Pattern.compile(regEx);
-		Matcher m = p.matcher(html);
+		Matcher m = Pattern.compile(regEx).matcher(html);
 		String s = m.replaceAll("");
 		return s;
 	}
@@ -429,16 +428,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return result;
 	}
+
 	/**
 	 * <p>
 	 * 获取替换占位符后的正则表达式字符串
 	 * </p>
 	 * 如 ?id=#内容#将转换为\\?id=(.*?)</br>
+	 * 
 	 * @param input
 	 *            the {@code String} to unescape, may be null
 	 * @return a new unescaped {@code String}, {@code ""} if null string input
 	 */
-	public static String getRegExp(final CharSequence regStr,final CharSequence placeholder) {
+	public static String getRegExp(final CharSequence regStr, final CharSequence placeholder) {
 		String result = convertRegExp(regStr);
 		Matcher m = Pattern.compile(placeholder.toString()).matcher(regStr);
 		if (m.find()) {
