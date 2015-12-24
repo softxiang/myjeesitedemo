@@ -25,6 +25,7 @@ import com.thinkgem.jeesite.modules.p2p.entity.Cp2pProducts;
 import com.thinkgem.jeesite.modules.p2p.entity.Cp2pSeries;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pProductsService;
 import com.thinkgem.jeesite.modules.p2p.service.Cp2pSeriesService;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 @Service
 @Lazy(false)
@@ -92,9 +93,9 @@ public class List5262ParserSpring {
 						Cp2pProducts entity = new Cp2pProducts();
 						entity.setCp2pSeries(new Cp2pSeries(cp2pSeriesId));
 						entity.setDetailuri(detailurl);
-						Cp2pProducts cp2pProduct = ObjectUtils.defaultIfNull(cp2pProductsService.get(entity), new Cp2pProducts());
+						Cp2pProducts cp2pProduct = cp2pProductsService.getEntity(entity);
 						// 不存在去取
-						if (StringUtils.isBlank(cp2pProduct.getId())) {
+						if (null == cp2pProduct || StringUtils.isBlank(cp2pProduct.getId())) {
 							Detail5262Parser detail5262Parser = new Detail5262Parser(idStr, detailurl, cp2pSeries, cp2pProductsService);
 							Thread thread = new Thread(detail5262Parser);
 							thread.start();
@@ -185,8 +186,7 @@ class Detail5262Parser implements Runnable {
 		try {
 			doc = Jsoup.connect(detailurl).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").timeout(5000).get();
 			Cp2pProducts cp2pProducts = new Cp2pProducts();
-			cp2pProducts.preInsert();
-			cp2pProducts.setIsNewRecord(true);
+			cp2pProducts.setCreateBy(UserUtils.get("taskparser"));
 
 			cp2pProducts.setCp2pSeries(cp2pSeries);
 			cp2pProducts.setSid(sid);

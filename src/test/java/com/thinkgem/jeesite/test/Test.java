@@ -4,22 +4,29 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 
 public class Test {
 
 	public static void main(String[] args) {
-		//String str = "cssexp:xxxx;";
-		//Matcher m = Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(str);
+		// String str = "cssexp:xxxx;";
+		// Matcher m =
+		// Pattern.compile("cssexp:(.*?);regexp:(.*?);").matcher(str);
 		String str = "<span class=\"fn-l\">产品编号 : HZ151219112502 <i class=\"turn-ico\"></i> </span>";
 		Matcher m = Pattern.compile("产品编号 : (.*?) ").matcher(str);
-		
+
 		if (m.find()) {
-			System.out.println(m.group(0) + ":" + m.group(1)) ;//+ ":" + m.group(2));
+			System.out.println(m.group(0) + ":" + m.group(1));// + ":" +
+																// m.group(2));
 			System.out.println(m.groupCount());
 		} else {
 			System.out.println("没找到");
@@ -30,24 +37,38 @@ public class Test {
 		String str1 = "?id=[.#内容#\"";
 		// ([{\^-$|}])?*+.
 		System.out.println(StringUtils.convertRegExp(str1));
-		
-		
+
 		String str2 = "<p><em>￥200.00</em>万</p>";
-		System.out.println("HTML:"+StringUtils.replaceHtml(str2));
-		
-		
+		System.out.println("HTML:" + StringUtils.replaceHtml(str2));
+
 		String str3 = "￥200.00万";
 		Matcher m3 = Pattern.compile("[^\\d|.]*").matcher(str3);
-		if(m3.find()){
-			System.out.println("str3:"+m3.group());
+		if (m3.find()) {
+			System.out.println("str3:" + m3.group());
 		}
-		
+
 		String str4 = "15.00年2个月";
 		Matcher m4 = Pattern.compile("(\\d.+)月").matcher(str4);
-		if(m4.find()){
-			System.out.println("str4:"+m4.group()+"---"+m4.group(1));
+		if (m4.find()) {
+			System.out.println("str4:" + m4.group() + "---" + m4.group(1));
 		}
-		
+		try {
+			String url = "http://www.ppmoney.com/project/PrjListJson/-2/1/JiGouBao/true/true?_=1450881991466";
+			String doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").ignoreContentType(true).timeout(5000).execute().body();
+			System.out.println(doc);
+			ObjectMapper mapper = new ObjectMapper();
+			Map<?, ?> map = mapper.readValue(doc, Map.class);
+			Iterator<?> iterator = map.keySet().iterator();
+			while (iterator.hasNext()) {
+				Object key = iterator.next();
+				System.out.print(key + ":");
+				System.out.println(map.get(key).toString());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		// aaaa();
 		/*
 		 * Class clazz; try {
