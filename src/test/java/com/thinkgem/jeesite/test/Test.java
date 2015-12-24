@@ -3,14 +3,16 @@ package com.thinkgem.jeesite.test;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thinkgem.jeesite.common.utils.StringUtils;
@@ -53,18 +55,29 @@ public class Test {
 			System.out.println("str4:" + m4.group() + "---" + m4.group(1));
 		}
 		try {
+			String listCSSExp = "PackageList#Data";
 			String url = "http://www.ppmoney.com/project/PrjListJson/-2/1/JiGouBao/true/true?_=1450881991466";
 			String doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").ignoreContentType(true).timeout(5000).execute().body();
-			System.out.println(doc);
 			ObjectMapper mapper = new ObjectMapper();
 			Map<?, ?> map = mapper.readValue(doc, Map.class);
-			Iterator<?> iterator = map.keySet().iterator();
-			while (iterator.hasNext()) {
-				Object key = iterator.next();
-				System.out.print(key + ":");
-				System.out.println(map.get(key).toString());
+			String[] path = listCSSExp.split("#");
+			Object obj = map;
+			for (int i = 0; i < path.length; i++) {
+				obj = ((Map) obj).get(path[i]);
 			}
-
+			if (obj instanceof AbstractCollection) {
+				System.out.println("aa");
+				Object temp = null;
+				Iterator iterator = ((AbstractCollection) obj).iterator();
+				while (iterator.hasNext()) {
+					temp = iterator.next();
+					System.out.println(((Map) temp).get("prjId"));
+				}
+			}
+			System.out.println("obj:" + obj.toString());
+			String jsonstr = "{\"PackageList\":{\"ContentEncoding\":null,\"ContentType\":null,\"Data\":[{\"prjId\":14956,\"type\":\"机构保\",\"SingleInvestmentAmount\":0}],\"JsonRequestBehavior\":1,\"MaxJsonLength\":null,\"RecursionLimit\":null},\"Now\":\"2015/12/24 15:41:09\",\"TotalCount\":6}";
+			Map<?, ?> mapa = mapper.readValue(jsonstr, Map.class);
+			System.out.println("Data:"+mapa.get("Data"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

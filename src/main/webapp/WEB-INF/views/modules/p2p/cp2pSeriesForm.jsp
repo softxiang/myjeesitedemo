@@ -46,13 +46,15 @@
 		<div class="control-group">
 			<label class="control-label">名称：</label>
 			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+				<form:input path="name" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">列表地址：</label>
 			<div class="controls">
-				<form:input path="listuri" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+				<form:input path="listuri" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
+				<span class="help-inline"><font color="">#pageattr#将被替换为页数,如:http://a.com/x?page=#pageattr#或者http://www.a.com/b/#pageattr#/b/</font> </span>
+				
 			</div>
 		</div>
 		<div class="control-group">
@@ -64,13 +66,13 @@
 		<div class="control-group">
 			<label class="control-label">最大页数：</label>
 			<div class="controls">
-				<form:input path="pagemax" htmlEscape="false" class="input-xlarge  digits"/>
+				<form:input path="pagemax" htmlEscape="false" class="input-xlarge  digits required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">返回结果类型：</label>
 			<div class="controls">
-				<form:select path="listdatatype" class="input-xlarge ">
+				<form:select path="listdatatype" class="input-xlarge required">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictList('p2p_serieslist_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
@@ -79,28 +81,28 @@
 		<div class="control-group">
 			<label class="control-label">列表获取表达式：</label>
 			<div class="controls">
-				<form:input path="listrootexp" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+				<form:input path="listrootexp" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
 				<span class="help-inline"><font color="">表达式:cssexp:css;regexp:xxx#内容#xxx;</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">明细id表达式：</label>
 			<div class="controls">
-				<form:input path="detailidexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="detailidexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 				<span class="help-inline"><font color="">表达式:${cp2pSeries.detailidexp}</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">列表进度表达式：</label>
 			<div class="controls">
-				<form:input path="listscheduleexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="listscheduleexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 				<span class="help-inline"><font color="">表达式:${cp2pSeries.listscheduleexp}</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">详细页前缀：</label>
 			<div class="controls">
-				<form:input path="detailprefix" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="detailprefix" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -112,13 +114,13 @@
 		<div class="control-group">
 			<label class="control-label">名称表达式：</label>
 			<div class="controls">
-				<form:input path="nameexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="nameexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">利率表达式：</label>
 			<div class="controls">
-				<form:input path="rateexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="rateexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -130,19 +132,19 @@
 		<div class="control-group">
 			<label class="control-label">总金额表达式：</label>
 			<div class="controls">
-				<form:input path="totalmoneyexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="totalmoneyexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">期限表达式：</label>
 			<div class="controls">
-				<form:input path="termexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="termexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">进度表达式：</label>
 			<div class="controls">
-				<form:input path="scheduleexp" htmlEscape="false" maxlength="500" class="input-xlarge "/>
+				<form:input path="scheduleexp" htmlEscape="false" maxlength="500" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
