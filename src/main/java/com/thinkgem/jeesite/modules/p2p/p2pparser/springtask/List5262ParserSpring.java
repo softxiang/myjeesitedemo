@@ -51,7 +51,6 @@ public class List5262ParserSpring {
 	String idCSSExp = "";
 	// 获取id正则
 	String idRegExp = "";
-	String detailurl = "";
 
 	@Autowired
 	private Cp2pSeriesService cp2pSeriesService;
@@ -97,7 +96,7 @@ public class List5262ParserSpring {
 		log.info(getClass().getName() + "......end......");
 	}
 
-	private void parserJson(final String url) throws IOException {
+	private void parserJson(final String url) throws Exception {
 		// 解析json格式的地址
 		String returndata = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").ignoreContentType(true).timeout(5000).execute().body();
 		ObjectMapper mapper = new ObjectMapper();
@@ -105,21 +104,46 @@ public class List5262ParserSpring {
 		String[] path = listCSSExp.split("#");
 		Object obj = map;
 		for (int i = 0; i < path.length; i++) {
-			obj = ((Map) obj).get(path[i]);
+			obj = ((Map<?, ?>) obj).get(path[i]);
 		}
 		if (obj instanceof AbstractCollection) {
 			Object temp = null;
-			Iterator iterator = ((AbstractCollection) obj).iterator();
+			Iterator<?> iterator = ((AbstractCollection<?>) obj).iterator();
 			while (iterator.hasNext()) {
 				temp = iterator.next();
-				String id = null == ((Map) temp).get("prjId") ? "" : ((Map) temp).get("prjId").toString();
-				String detailurl = detailURIPrefix.replaceAll("#id#", id);
-				System.out.println(detailurl);
+				String idStr = null == ((Map<?, ?>) temp).get(idCSSExp) ? "" : ((Map<?, ?>) temp).get(idCSSExp).toString();
+				if (StringUtils.isNotBlank(idRegExp)) {
+					Matcher idmhr = Pattern.compile(StringUtils.getRegExp(idRegExp, contentPlaceHolder)).matcher(idStr);
+					if (idmhr.find() && idmhr.groupCount() > 0) {
+						idStr = idmhr.group(1);
+					}
+				}
+
+				if (StringUtils.isBlank(idStr)) {
+					throw new InvalidParameterException("获取详细页ID元素错误！");
+				}
+				String detailurl = detailURIPrefix.replaceAll("#id#", idStr);
+
+				String listschedulecss = getCssExp(cp2pSeries.getListscheduleexp());
+				String listschedulereg = getRegExp(cp2pSeries.getListscheduleexp());
+				if (StringUtils.isBlank(listschedulecss)) {
+					throw new InvalidParameterException("获取列表中的进度参数错误！");
+				}
+				String scheduleStr = null == ((Map<?, ?>) temp).get(listschedulecss) ? "" : ((Map<?, ?>) temp).get(listschedulecss).toString();
+				if (StringUtils.isNoneBlank(listschedulereg)) {
+					Matcher schedulem = Pattern.compile(StringUtils.getRegExp(listschedulereg, contentPlaceHolder)).matcher(scheduleStr);
+					if (schedulem.find() && schedulem.groupCount() > 0) {
+						scheduleStr = schedulem.group(1);
+					}
+				}
+				scheduleStr = StringUtils.replaceHtml(scheduleStr);
+
+				parserCommon(idStr, scheduleStr, detailurl);
 			}
 		}
 	}
 
-	private void parserDocumnet(final String detailURL) throws IOException {
+	private void parserDocumnet(final String detailURL) throws Exception {
 		Element doc = Jsoup.connect(detailURL).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36").timeout(5000).get().body();
 		// 数据tr列表
 		Elements listtr = doc.select(listCSSExp);
@@ -136,55 +160,72 @@ public class List5262ParserSpring {
 				throw new InvalidParameterException("获取详细页ID元素错误！");
 			}
 			String detailurl = detailURIPrefix.replaceAll("#id#", idStr);
-			if (StringUtils.isNotBlank(detailurl)) {
-				Cp2pProducts entity = new Cp2pProducts();
-				entity.setCp2pSeries(new Cp2pSeries(cp2pSeriesId));
-				entity.setDetailuri(detailurl);
-				Cp2pProducts cp2pProduct = cp2pProductsService.getEntity(entity);
-				// 不存在去取
-				if (null == cp2pProduct || StringUtils.isBlank(cp2pProduct.getId())) {
-					Detail5262Parser detail5262Parser = new Detail5262Parser(idStr, detailurl, cp2pSeries, cp2pProductsService);
-					Thread thread = new Thread(detail5262Parser);
-					thread.start();
-				} else if (StringUtils.isNotBlank(cp2pProduct.getId()) && cp2pProduct.getSchedule() != 100f) {
-					// 更新
-					String listschedulecss = getCssExp(cp2pSeries.getListscheduleexp());
-					String listschedulereg = getRegExp(cp2pSeries.getListscheduleexp());
-					if (StringUtils.isBlank(listschedulecss) || StringUtils.isBlank(listschedulereg)) {
-						throw new InvalidParameterException("获取列表中的进度参数错误！");
-					}
-					Elements scheduletds = tr.select(listschedulecss);
-					Element scheduletd = null != scheduletds && scheduletds.size() > 0 ? scheduletds.get(0) : null;
-					String scheduleStr = null != scheduletd ? scheduletd.toString() : "";
-					Matcher schedulem = Pattern.compile(StringUtils.getRegExp(listschedulereg, contentPlaceHolder)).matcher(scheduleStr);
-					if (schedulem.find() && schedulem.groupCount() > 0) {
-						scheduleStr = schedulem.group(1);
-					}
-					float schedulef = 0.00f;
-					if (StringUtils.isNotBlank(scheduleStr)) {
-						scheduleStr = StringUtils.replaceHtml(scheduleStr);
-						try {
-							schedulef = Float.parseFloat(scheduleStr.replaceAll("[^\\d|.]*", "").trim());
-						} catch (Exception e) {
-							log.warn("列表进度格式化错误:" + scheduleStr + ";" + detailurl);
-						}
-					}
-					Cp2pProducts target = new Cp2pProducts();
-					try {
-						BeanUtils.copyProperties(target, cp2pProduct);
-						target.setSchedule(schedulef);
-						target.preUpdate();
-						cp2pProductsService.save(target);
-					} catch (Exception e) {
-						log.warn("已存在产品更新失败" + detailurl + ",原因:" + e.getLocalizedMessage());
-					}
-					log.debug("已存在产品更新成功" + detailurl);
-				}
 
+			String scheduleStr = getDocumentListschedule(tr);
+
+			parserCommon(idStr, scheduleStr, detailurl);
+		}
+	}
+
+	private void parserCommon(final String idStr, final String scheduleStr, final String detailurl) throws Exception {
+		if (StringUtils.isNotBlank(detailurl)) {
+			Cp2pProducts entity = new Cp2pProducts();
+			entity.setCp2pSeries(new Cp2pSeries(cp2pSeriesId));
+			entity.setDetailuri(detailurl);
+			Cp2pProducts cp2pProduct = cp2pProductsService.getEntity(entity);
+			// 不存在去取
+			if (null == cp2pProduct || StringUtils.isBlank(cp2pProduct.getId())) {
+				Detail5262Parser detail5262Parser = new Detail5262Parser(idStr, detailurl, cp2pSeries, cp2pProductsService);
+				Thread thread = new Thread(detail5262Parser);
+				thread.start();
+			} else if (StringUtils.isNotBlank(cp2pProduct.getId()) && cp2pProduct.getSchedule() != 100f) {
+				// 更新
+				float schedulef = 0.00f;
+				if (StringUtils.isNotBlank(scheduleStr)) {
+					try {
+						schedulef = Float.parseFloat(scheduleStr.replaceAll("[^\\d|.]*", "").trim());
+					} catch (Exception e) {
+						throw new Exception("格式化列表中的进度参数错误！原因:" + e.getLocalizedMessage());
+					}
+				}
+				Cp2pProducts target = new Cp2pProducts();
+				try {
+					BeanUtils.copyProperties(target, cp2pProduct);
+					target.setSchedule(schedulef);
+					target.preUpdate();
+					cp2pProductsService.save(target);
+				} catch (Exception e) {
+					throw new Exception("已存在产品更新失败！原因:" + e.getLocalizedMessage());
+				}
+				log.debug("已存在产品更新成功" + detailurl);
 			}
 		}
 	}
 
+	private String getDocumentListschedule(final Element tr) {
+		String scheduleStr = "";
+		String listschedulecss = getCssExp(cp2pSeries.getListscheduleexp());
+		String listschedulereg = getRegExp(cp2pSeries.getListscheduleexp());
+		if (StringUtils.isBlank(listschedulecss) || StringUtils.isBlank(listschedulereg)) {
+			throw new InvalidParameterException("获取列表中的进度参数错误！");
+		}
+		Elements scheduletds = tr.select(listschedulecss);
+		Element scheduletd = null != scheduletds && scheduletds.size() > 0 ? scheduletds.get(0) : null;
+		scheduleStr = null != scheduletd ? scheduletd.toString() : "";
+		Matcher schedulem = Pattern.compile(StringUtils.getRegExp(listschedulereg, contentPlaceHolder)).matcher(scheduleStr);
+		if (schedulem.find() && schedulem.groupCount() > 0) {
+			scheduleStr = schedulem.group(1);
+		}
+		return StringUtils.replaceHtml(scheduleStr);
+	}
+
+	/**
+	 * 根据传入字符串获取css表达式，如传入cssexp:css;regexp:reg; 将获取css
+	 * 
+	 * @param str
+	 *            可以为html编码后的字符串
+	 * @return css规则表达式
+	 */
 	private String getCssExp(final String str) {
 		String result = "";
 		Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(str));
@@ -194,6 +235,13 @@ public class List5262ParserSpring {
 		return result;
 	}
 
+	/**
+	 * 根据传入字符串获取reg表达式，如传入cssexp:css;regexp:reg; 将获取reg
+	 * 
+	 * @param str
+	 *            可以为html编码后的字符串
+	 * @return reg规则表达式
+	 */
 	private String getRegExp(final String str) {
 		String result = "";
 		Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(str));
@@ -214,7 +262,7 @@ class Detail5262Parser implements Runnable {
 	private Cp2pProductsService cp2pProductsService;
 	private Document doc;
 
-	public Detail5262Parser(String sid, String detailurl, Cp2pSeries cp2pSeries, Cp2pProductsService cp2pProductsService) throws IOException {
+	public Detail5262Parser(String sid, String detailurl, Cp2pSeries cp2pSeries, Cp2pProductsService cp2pProductsService) {
 		this.sid = sid;
 		this.detailurl = detailurl;
 		this.cp2pSeries = cp2pSeries;
@@ -388,22 +436,28 @@ class Detail5262Parser implements Runnable {
 		String temp = StringUtils.defaultIfBlank(fieldExp, "").trim();
 		String result = "";
 		if (StringUtils.isNotBlank(fieldComment) && StringUtils.isNotBlank(temp)) {
-			StringBuffer cssExp = new StringBuffer();
-			StringBuffer regExp = new StringBuffer();
+			String cssExp = "";
+			String regExp = "";
 			Matcher m = Pattern.compile(defaultRegExp).matcher(StringUtils.unescapeHtml4Default(fieldExp));
 			if (m.find() && 2 == m.groupCount()) {
-				cssExp = cssExp.append(StringUtils.defaultIfBlank(m.group(1), ""));
-				regExp = regExp.append(StringUtils.getRegExp(StringUtils.defaultIfBlank(m.group(2), ""), contentPlaceHolder));
+				cssExp = StringUtils.defaultIfBlank(m.group(1), "");
+				regExp = StringUtils.getRegExp(StringUtils.defaultIfBlank(m.group(2), ""), contentPlaceHolder);
 			} else {
 				throw new InvalidParameterException(fieldComment + "采集规则配置错误!" + detailurl);
 			}
-			Elements eles = doc.select(cssExp.toString());
-			if (1 == eles.size()) {
-				Element ele = eles.get(0);
-				String tempStr = ObjectUtils.defaultIfNull(ele, "").toString();
-				Matcher tempm = Pattern.compile(regExp.toString()).matcher(tempStr);
-				if (tempm.find()) {
-					result = StringUtils.defaultIfBlank(tempm.group(1), "").trim();
+			if (StringUtils.isNotBlank(cssExp)) {
+				Elements eles = doc.select(cssExp);
+				if (1 == eles.size()) {
+					Element ele = eles.get(0);
+					result = ObjectUtils.defaultIfNull(ele, "").toString();
+					if (StringUtils.isNotBlank(regExp)) {
+						Matcher tempm = Pattern.compile(regExp).matcher(result);
+						if (tempm.find()) {
+							result = StringUtils.defaultIfBlank(tempm.group(1), "").trim();
+						}
+					}
+				} else {
+					log.warn("获取" + fieldComment + "出错，根据css表达式获取到多个结果。" + detailurl);
 				}
 			}
 			if (StringUtils.isBlank(result)) {
