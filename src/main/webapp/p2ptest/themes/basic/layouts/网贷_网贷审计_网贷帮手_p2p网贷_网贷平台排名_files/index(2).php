@@ -1,0 +1,1 @@
+document.write("<a href='http://www.chayigo.com/gg/mianfei_gg.php#tuisong' target='_blank' title='免费活动'><img style='width:158px;height:155px' border='0' src='http://www.chayigo.com/data/upload/shop/adv/04988920243918385.jpg' alt='免费活动'/></a>");

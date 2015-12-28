@@ -1,0 +1,1 @@
+document.write("<a href='http://mp.weixin.qq.com/s?__biz=MzIzNzA2ODIyNQ==&amp;mid=400607889&amp;idx=1&amp;sn=317ac5fdf75e5ed4e93786d3535e019c#rd' target='_blank' title='免费活动'><img style='width:158px;height:155px' border='0' src='http://www.chayigo.com/data/upload/shop/adv/05012795603088306.jpg' alt='免费活动'/></a>");

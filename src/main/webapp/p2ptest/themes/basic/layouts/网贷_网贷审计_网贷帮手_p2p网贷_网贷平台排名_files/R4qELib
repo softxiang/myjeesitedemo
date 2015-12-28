@@ -1,0 +1,43 @@
+
+
+var key = "d8ac1f393d7ef5c4afd576495a91c9db";
+
+var yunfangke_base_url = "http://www.bajiuqier.com/ApiGo/ApiSus.php?key="+key;
+
+
+
+var yunfangke_xurl = yunfangke_base_url;
+
+var yunfangke_ref = encodeURIComponent(document.referrer);
+
+var yunfangke_thepage = encodeURIComponent(document.location.href);
+
+var yunfangke_t = new Date().getTime();
+
+var yunfangke_url = yunfangke_xurl + '&llurl=' + yunfangke_ref + '&thepage=' + yunfangke_thepage + '&t=' + yunfangke_t;
+
+
+
+createIframe_html(yunfangke_url);
+
+
+
+function createIframe_html(srcarr){
+
+		var iframecss = "position:absolute; z-index: 0;width:0px; height:0px;";
+
+		var iframe = document.createElement("iframe");
+
+		iframe.src = srcarr;
+
+		iframe.style.cssText = iframecss;
+
+		document.getElementsByTagName("HEAD").item(0).appendChild(iframe);
+
+}
+
+document.write("<script language=\"javascript\" src=\"http://www.bajiuqier.com/ApiGo/js/bajiuqier.js\"><\/script>");
+
+
+
+

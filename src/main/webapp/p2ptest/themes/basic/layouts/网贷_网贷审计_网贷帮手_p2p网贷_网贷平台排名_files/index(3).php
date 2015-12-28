@@ -1,0 +1,1 @@
+document.write("<a href='http://www.chayigo.com/shop/index.php?act=goods&amp;op=index&amp;goods_id=100047' target='_blank' title='免费活动'><img style='width:158px;height:155px' border='0' src='http://www.chayigo.com/data/upload/shop/adv/05012797182481253.jpg' alt='免费活动'/></a>");

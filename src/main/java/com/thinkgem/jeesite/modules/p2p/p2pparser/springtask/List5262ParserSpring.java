@@ -57,7 +57,7 @@ public class List5262ParserSpring {
 	@Autowired
 	private Cp2pProductsService cp2pProductsService;
 
-	@Scheduled(cron = "0 0/1 * * * ?")
+	//@Scheduled(cron = "0 0/1 * * * ?")
 	public void work() {
 		log.info(getClass().getName() + "......start......");
 		try {
