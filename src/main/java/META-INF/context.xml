@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Resource name="jdbc/soft_xiang" auth="Container" type="javax.sql.DataSource"
+		driverClassName="org.gjt.mm.mysql.Driver"
+		url="jdbc:mysql://localhost:3306/udb_soft_xiang?useUnicode=true
+?characterEncoding=UTF-8"
+		username="soft_xiang" password="xsj123456" maxActive="10" maxIdle="5"
+		maxWait="50000" />
+</Context>
