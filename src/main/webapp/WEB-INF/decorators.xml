@@ -9,4 +9,6 @@
 	<decorator name="cms_default_basic" page="modules/cms/front/themes/basic/layouts/default.jsp" />
 	<decorator name="cms_default_weixin" page="modules/cms/front/themes/weixin/layouts/default.jsp" />
 	
+	<decorator name="index_default_basic" page="modules/webfront/themes/basic/layouts/default.jsp" />
+	
 </decorators>

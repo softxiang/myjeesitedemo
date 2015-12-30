@@ -11,4 +11,5 @@
 	<link href="${ctxStatic}/common/jeesite.min.css" type="text/css" rel="stylesheet" />
 	<link href="${ctxStaticTheme}/style.css" type="text/css" rel="stylesheet" />
 	<script src="${ctxStaticTheme}/script.js" type="text/javascript"></script>
+	<!-- this is cms test -->
 </c:if>

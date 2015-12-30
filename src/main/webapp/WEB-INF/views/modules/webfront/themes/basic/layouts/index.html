@@ -482,7 +482,6 @@
 							<td id="x_03" class="lrss">总部江苏</td>
 							<td class="lrss"><strong><font style="COLOR: #ff6600; FONT-SIZE: 10.5pt">★★★★☆</font></strong></td>
 						</tr>
-						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -502,7 +501,7 @@
 						</div>
 					</div>
 					<div class="bd">
-						<ul style="display: none;">
+						<ul>
 							<li><iframe frameborder="0" width="738" height="167" marginheight="0" marginwidth="0" scrolling="no" src="http://www.wangdaibangshou.com/phb.asp?l=0"></iframe></li>
 						</ul>
 						<ul style="display: none;">
@@ -511,7 +510,7 @@
 						<ul style="display: none;">
 							<li><iframe frameborder="0" width="738" height="167" marginheight="0" marginwidth="0" scrolling="no" src="http://www.wangdaibangshou.com/phb.asp?l=2"></iframe></li>
 						</ul>
-						<ul style="display: block;">
+						<ul style="display: none;">
 							<li><iframe frameborder="0" width="738" height="167" marginheight="0" marginwidth="0" scrolling="no" src="http://www.wangdaibangshou.com/phb.asp?l=4"></iframe></li>
 						</ul>
 					</div>
@@ -594,44 +593,43 @@
 				</script>
 			</div>
 		</div>
-		<div class="foot">
-			<a href="http://www.wangdaibangshou.com/about.asp?id=1">关于我们</a> | <a href="http://www.wangdaibangshou.com/about.asp?id=2">加入我们</a> | <a href="http://www.wangdaibangshou.com/about.asp?id=3">服务中心</a>
-			| <a href="http://www.wangdaibangshou.com/message.asp">意见建议</a> | <a href="http://www.wangdaibangshou.com/#">网站地图</a> <br /> CopyRight (C) 2012-2015 网贷帮手 版权所有 辽ICP备13002521号 <br />E-mail:wangdaibangshou@163.com
-			Code:201005 TEL:010-82345799 Mobail:15040052628 <br />
+	</div>
+	<div class="foot">
+		<a href="http://www.wangdaibangshou.com/about.asp?id=1">关于我们</a> | <a href="http://www.wangdaibangshou.com/about.asp?id=2">加入我们</a> | <a href="http://www.wangdaibangshou.com/about.asp?id=3">服务中心</a>
+		| <a href="http://www.wangdaibangshou.com/message.asp">意见建议</a> | <a href="http://www.wangdaibangshou.com/#">网站地图</a> <br /> CopyRight (C) 2012-2015 网贷帮手 版权所有 辽ICP备13002521号 <br />E-mail:wangdaibangshou@163.com
+		Code:201005 TEL:010-82345799 Mobail:15040052628 <br />
+	</div>
+	<div>
+		<div id="moquu_wxin" class="moquu_wxin">
+			<a href="javascript:void(0)">1
+				<div class="moquu_wxinh"></div>
+			</a>
 		</div>
-		<!-- 代码 开始 -->
-		<div>
-			<div id="moquu_wxin" class="moquu_wxin">
-				<a href="javascript:void(0)">1
-					<div class="moquu_wxinh"></div>
-				</a>
-			</div>
-			<div id="moquu_wshare" class="moquu_wshare">
-				<a href="javascript:void(0)">2
-					<div class="moquu_wshareh"></div>
-				</a>
-			</div>
-			<div id="moquu_wmaps">
-				<a href="javascript:void(0)" class="moquu_wmaps">3</a>
-			</div>
-			<a id="moquu_top" href="javascript:void(0)" style="display: none;"></a>
+		<div id="moquu_wshare" class="moquu_wshare">
+			<a href="javascript:void(0)">2
+				<div class="moquu_wshareh"></div>
+			</a>
 		</div>
-		<script type="text/javascript">
-			function backtop() {
-				h = $(window).height();
-				t = $(document).scrollTop();
-				t > h ? $("#moquu_top").show() : $("#moquu_top").hide();
-			}
-			$(document).ready(function() {
-				backtop();
-				$("#moquu_top").click(function() {
-					$(document).scrollTop(0)
-				})
+		<div id="moquu_wmaps">
+			<a href="javascript:void(0)" class="moquu_wmaps">3</a>
+		</div>
+		<a id="moquu_top" href="javascript:void(0)" style="display: none;"></a>
+	</div>
+	<script type="text/javascript">
+		function backtop() {
+			h = $(window).height();
+			t = $(document).scrollTop();
+			t > h ? $("#moquu_top").show() : $("#moquu_top").hide();
+		}
+		$(document).ready(function() {
+			backtop();
+			$("#moquu_top").click(function() {
+				$(document).scrollTop(0)
 			})
-			$(window).scroll(function() {
-				backtop()
-			})
-		</script>
-		<!-- 代码 结束 -->
+		})
+		$(window).scroll(function() {
+			backtop()
+		})
+	</script>
 </body>
 </html>
