@@ -1,0 +1,9 @@
+@charset "utf-8";
+/* CSS Document */
+*{padding:0px; margin:0px; list-style:none;}
+a{text-decoration:none; color:#333;}
+a:hover{text-decoration:none; color:#f90;}
+
+td{font-size:12px;}
+img{border:0px;}
+body{font-family:"微软雅黑", Microsoft YaHei, Verdana, Arial; font-size:12px; background:#fff; color:#666;}

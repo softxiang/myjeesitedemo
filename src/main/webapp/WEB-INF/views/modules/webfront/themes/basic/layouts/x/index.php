@@ -1,1 +1,0 @@
-document.write("<a href='http://www.chayigo.com/shop/index.php?act=goods&amp;op=index&amp;goods_id=100044' target='_blank' title='茶易购活动'><img style='width:158px;height:155px' border='0' src='http://www.chayigo.com/data/upload/shop/adv/04988910886040511.jpg' alt='茶易购活动'/></a>");

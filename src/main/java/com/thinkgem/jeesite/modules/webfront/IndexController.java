@@ -41,7 +41,7 @@ public class IndexController extends BaseController {
 		Site site = CmsUtils.getSite(Site.defaultSiteId());
 		model.addAttribute("site", site);
 		model.addAttribute("isIndex", true);
-		return "modules/webfront/themes/basic/frontIndex";
+		return "modules/webfront/themes/basic/index";
 	}
 
 	/**
