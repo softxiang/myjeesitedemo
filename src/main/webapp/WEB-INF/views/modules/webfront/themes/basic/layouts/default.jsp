@@ -53,49 +53,109 @@
 			</table>
 		</center>
 	</div>
+	<div class="head">
+		<div class="ty" id="top" style="position:relative; z-index:98;  background-color:#FFF;">
+			<div class="logo">
+				<a href="#"><img src="${ctxStaticTheme}/images/index_06.jpg" alt="网贷平台_中国首家权威P2P网贷理财行业门户" /></a>
+			</div>
+			<ul id="abgne_fade_pic30" style="margin-bottom:5px;width:610px;height:70px;overflow:hidden;  float:right;position:relative; z-index:5;">
+			</ul>
+		</div>
+		<div class="menu topmenu topmenu_fixed">
+			<div style="width:8px; float:left;">
+				<img src="${ctxStaticTheme}/images/index_12.jpg" alt="" />
+			</div>
+			<div style="width:970px; float:left;">
+				<ul>
+					<li><a href="${ctxStaticTheme}/images/网贷_网贷审计_网贷帮手_p2p网贷_网贷平台排名.htm">首 页</a></li>
+					<li style="width:2px;"><img src="${ctxStaticTheme}/images/index_15.jpg" alt="" /></li>
+					<li><a href="http://www.wangdaibangshou.com/ptpl.asp?lid=15">评 论</a>
+						<ul>
+							<li><a href="http://www.wangdaibangshou.com/ptpl.asp?lid=14">平台调查</a></li>
+							<li><a href="http://www.wangdaibangshou.com/ptpl.asp?lid=15">平台评论</a></li>
+							<li><a href="http://www.wangdaibangshou.com/dc.asp">平台申请调查</a></li>
+						</ul></li>
+					<li style="width:2px;"><img src="${ctxStaticTheme}/images/index_15.jpg" alt="" /></li>
+					<li><a href="http://bbs.wangdaibangshou.com/forum.php?mod=forumdisplay&amp;fid=157" target="_blank" style="position:relative;">梦评选</a>
+						<div style="width:25px; position:absolute; top:-7px; display:inline; left:945px;">
+							<img src="${ctxStaticTheme}/images/h.gif" width="25" />
+						</div></li>
+				</ul>
+			</div>
+			<div style="width:8px; float:right;">
+				<img src="${ctxStaticTheme}/images/index_18.jpg" alt="" />
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+				$(document).scroll(function() {
+					if ($(this).scrollTop() > 129) {
+						$('.topmenu').addClass('topmenu_fixed');
+					} else {
+						$('.topmenu').removeClass('topmenu_fixed');
+					}
+				});
+
+			})
+		</script>
+	</div>
 	<sitemesh:body />
 	<!-- /container -->
-	<div>
-		<footer>
-			<div class="foot">
-				<a href="http://www.wangdaibangshou.com/about.asp?id=1">关于我们</a> | <a href="http://www.wangdaibangshou.com/about.asp?id=2">加入我们</a> | <a href="http://www.wangdaibangshou.com/about.asp?id=3">服务中心</a>
-				| <a href="http://www.wangdaibangshou.com/message.asp">意见建议</a> | <a href="http://www.wangdaibangshou.com/#">网站地图</a> <br /> CopyRight (C) 2012-2015 网贷帮手 版权所有 辽ICP备13002521号 <br />E-mail:wangdaibangshou@163.com
-				Code:201005 TEL:010-82345799 Mobail:15040052628 <br />
+	<div class="footer">
+		<div class="footer-left">
+			<ul>
+				<li><a href="#">关于我们</a></li>
+				<li><a href="#">诚聘英才</a></li>
+				<li><a href="#">网站地图</a></li>
+				<li><a href="#">使用条款</a></li>
+				<li><a href="#">联系方式</a></li>
+				<li><a href="#">广告服务</a></li>
+				<li><a href="#">意见或建议</a></li>
+			</ul>
+			<span>版权所有：网贷 | 粤ICP备xxx号</span>
+		</div>
+		<div class="footer-right">
+			<div class="ftop">
+				Tel<span> | </span>Tel
 			</div>
-			<!-- 代码 开始 -->
-			<div>
-				<div id="moquu_wxin" class="moquu_wxin">
-					<a href="javascript:void(0)">1
-						<div class="moquu_wxinh"></div>
-					</a>
-				</div>
-				<div id="moquu_wshare" class="moquu_wshare">
-					<a href="javascript:void(0)">2
-						<div class="moquu_wshareh"></div>
-					</a>
-				</div>
-				<div id="moquu_wmaps">
-					<a href="javascript:void(0)" class="moquu_wmaps">3</a>
-				</div>
-				<a id="moquu_top" href="javascript:void(0)" style="display: none;"></a>
+			<div class="fcen">
+				服务时间 9:00 — 18:00 <span>工作日</span>
 			</div>
-			<script type="text/javascript">
-				function backtop() {
-					h = $(window).height();
-					t = $(document).scrollTop();
-					t > h ? $("#moquu_top").show() : $("#moquu_top").hide();
-				}
-				$(document).ready(function() {
-					backtop();
-					$("#moquu_top").click(function() {
-						$(document).scrollTop(0)
-					})
-				})
-				$(window).scroll(function() {
-					backtop()
-				})
-			</script>
-		</footer>
+			<div>邮箱 email</div>
+		</div>
 	</div>
+	<!-- 代码 开始 -->
+	<div>
+		<div id="moquu_wxin" class="moquu_wxin">
+			<a href="javascript:void(0)">1
+				<div class="moquu_wxinh"></div>
+			</a>
+		</div>
+		<div id="moquu_wshare" class="moquu_wshare">
+			<a href="javascript:void(0)">2
+				<div class="moquu_wshareh"></div>
+			</a>
+		</div>
+		<div id="moquu_wmaps">
+			<a href="javascript:void(0)" class="moquu_wmaps">3</a>
+		</div>
+		<a id="moquu_top" href="javascript:void(0)" style="display: none;"></a>
+	</div>
+	<script type="text/javascript">
+		function backtop() {
+			h = $(window).height();
+			t = $(document).scrollTop();
+			t > h ? $("#moquu_top").show() : $("#moquu_top").hide();
+		}
+		$(document).ready(function() {
+			backtop();
+			$("#moquu_top").click(function() {
+				$(document).scrollTop(0)
+			})
+		})
+		$(window).scroll(function() {
+			backtop()
+		})
+	</script>
 </body>
 </html>

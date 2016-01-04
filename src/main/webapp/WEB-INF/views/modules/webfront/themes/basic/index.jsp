@@ -4,56 +4,13 @@
 <html>
 <head>
 <title>首页</title>
+<meta property="qc:admins" content="204756106760606175125531454557" />
 <meta name="decorator" content="index_default_${site.theme}" />
 <meta name="description" content="JeeSite ${site.description}" />
 <meta name="keywords" content="JeeSite ${site.keywords}" />
 </head>
 <body>
 	<div class="web">
-		<div class="ty" id="top" style=" position:relative; z-index:98;  background-color:#FFF;">
-			<div class="logo">
-				<a href="#"><img src="${ctxStaticTheme}/images/index_06.jpg" alt="网贷平台_中国首家权威P2P网贷理财行业门户" /></a>
-			</div>
-			<ul id="abgne_fade_pic30" style="margin-bottom:5px;width:610px;height:70px;overflow:hidden;  float:right;position:relative; z-index:5;">
-			</ul>
-		</div>
-		<div class="menu topmenu topmenu_fixed">
-			<div style="width:8px; float:left;">
-				<img src="${ctxStaticTheme}/images/index_12.jpg" alt="" />
-			</div>
-			<div style="width:970px; float:left;">
-				<ul>
-					<li><a href="${ctxStaticTheme}/images/网贷_网贷审计_网贷帮手_p2p网贷_网贷平台排名.htm">首 页</a></li>
-					<li style="width:2px;"><img src="${ctxStaticTheme}/images/index_15.jpg" alt="" /></li>
-					<li><a href="http://www.wangdaibangshou.com/ptpl.asp?lid=15">评 论</a>
-						<ul>
-							<li><a href="http://www.wangdaibangshou.com/ptpl.asp?lid=14">平台调查</a></li>
-							<li><a href="http://www.wangdaibangshou.com/ptpl.asp?lid=15">平台评论</a></li>
-							<li><a href="http://www.wangdaibangshou.com/dc.asp">平台申请调查</a></li>
-						</ul></li>
-					<li style="width:2px;"><img src="${ctxStaticTheme}/images/index_15.jpg" alt="" /></li>
-					<li><a href="http://bbs.wangdaibangshou.com/forum.php?mod=forumdisplay&amp;fid=157" target="_blank" style="position:relative;">梦评选</a>
-						<div style="width:25px; position:absolute; top:-7px; display:inline; left:945px;">
-							<img src="${ctxStaticTheme}/images/h.gif" width="25" />
-						</div></li>
-				</ul>
-			</div>
-			<div style="width:8px; float:right;">
-				<img src="${ctxStaticTheme}/images/index_18.jpg" alt="" />
-			</div>
-		</div>
-		<script type="text/javascript">
-			$(function() {
-				$(document).scroll(function() {
-					if ($(this).scrollTop() > 129) {
-						$('.topmenu').addClass('topmenu_fixed');
-					} else {
-						$('.topmenu').removeClass('topmenu_fixed');
-					}
-				});
-
-			})
-		</script>
 		<div class="ty">
 			<div style="width:310px; height:260px; float:left; border:1px solid #ccc;">
 				<div id="focusBox" class="focusBox">
@@ -379,49 +336,57 @@
 			</div>
 		</div>
 		<div class="ty">
-			<div class="slideGroupp">
-				<div class="tit_740">
-					<div class="parHdd">
-						<ul>
-							<li>合作伙伴</li>
+			<div class="tit_740">
+				<div style="display:inline;float: left;">
+					<div class="tit_02">合作伙伴</div>
+				</div>
+				<div style="width:128px; float:right;display: inline;">
+					<div style="width:116px; float:left; text-align:center; line-height:24px; background-image:url(${ctxStaticTheme}/images/but.png); height:24px; margin-top:4px;">
+						<a href="#" class="baise" target="_blank">[ 申请链接 ]</a>
+					</div>
+				</div>
+			</div>
+			<div style="float:left; border:1px solid #ccc; border-top:0px; min-height:82px;">
+				<div class="linkMarquee-left">
+					<div class="bd">
+						<ul class="infoList">
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
+							<li><a href="#" target="_blank" title="#"><img src="http://www.wangdaixinwen.com/upload/2015120859217917.png" /></a></li>
 						</ul>
 					</div>
-					<div style="width:128px; float:right;">
-						<div style="width:116px; float:left; text-align:center; line-height:24px; background-image:url(${ctxStaticTheme}/images/but.png); height:24px; margin-top:4px;">
-							<a href="http://www.wangdaibangshou.com/link.asp" class="baise" target="_blank">[ 申请链接 ]</a>
-						</div>
-						<div style="width:12px; float:right;">
-							<img src="${ctxStaticTheme}/images/right_but.jpg" />
-						</div>
-					</div>
+					<script type="text/javascript">
+						jQuery(".linkMarquee-left").slide({
+							mainCell : ".bd ul",
+							autoPlay : true,
+							effect : "leftMarquee",
+							vis : 8,
+							interTime : 70
+						});
+					</script>
 				</div>
-				<div style="width:1000px; float:left; border:1px solid #ccc; border-top:0px; min-height:82px;">
-					<div class="parBdd">
-						<div class="slideBoxx">
-							<ul class="picgd">
-								<li>
-									<div class="pic">
-										<a href="http://p2pdh.com/" class="c" target="_blank" title="网贷平台：www.wangdaibangshou.com"><img src="${ctxStaticTheme}/images/201522613311519112.jpg" /></a>
-									</div>
-								</li>
-							</ul>
-						</div>
-						<!-- slideBox End -->
-					</div>
+				<hr size="1" color="#bbbcbc" style="FILTER: alpha(opacity=100,finishopacity=0);margin:0px 10px;" />
+				<div class="txtLink">
+					<ul>
+						<li><a href="#" target="_blank" title="#">扒财路</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+						<li><a href="#" target="_blank" title="#">aaa</a></li>
+					</ul>
 				</div>
-				<script type="text/javascript">
-					/* 内层图片无缝滚动 */
-					jQuery(".slideGroupp .slideBoxx").slide({
-						mainCell : ".picgd",
-						vis : 7,
-						prevCell : ".sPrev",
-						nextCell : ".sNext",
-						effect : "leftMarquee",
-						interTime : 50,
-						autoPlay : true,
-						trigger : "click"
-					});
-				</script>
 			</div>
 		</div>
 	</div>

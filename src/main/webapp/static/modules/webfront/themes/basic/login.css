@@ -7,3 +7,53 @@ a:hover{text-decoration:none; color:#f90;}
 td{font-size:12px;}
 img{border:0px;}
 body{font-family:"微软雅黑", Microsoft YaHei, Verdana, Arial; font-size:12px; background:#fff; color:#666;}
+/* main */
+.main{padding:50px 0px;border:1px solid #dbdadb;background: #fff;position: relative;}
+.main .find_pass{padding-bottom:100px;}
+.main .find_pass .input-div{padding-top:30px;}
+.prompt{width:274px;height:60px;line-height:60px;text-align:center;padding:0px 10px;position: absolute;top:-81px;left:50%;margin-left:-147px;font-size:14px;color:#fff;background:#0087cb;border-bottom-left-radius:5px;border-bottom-right-radius:5px;box-shadow:0 2px 3px #e4e4e4;-moz-box-shadow:0 2px 3px #e4e4e4;}
+.main-left{padding-left:130px;padding-bottom:20px;width:565px;border-right:1px dashed #e6e6e6;float: left;}
+.main-left h2{font-family:"Microsoft Yahei";font-size: 16px;color:#333;font-weight: bold;height:36px;line-height:36px;}
+.main-left h2 a { margin-left: 10px; color: #0087cb }
+.main-left h2 a:hover { text-decoration: underline; }
+.main-left .input-div{padding-top:20px;}
+.main-left .input-div .font14{font-size:14px;color:#333;}
+.main-left .input-text{color:#333;width:298px;margin-right:12px;border:1px solid #cdcccc;position: relative;z-index:1;height:40px;overflow: hidden;float: left;}
+.main-left .input-text-error{border:1px solid #ec5f48;color:#ff5656;-moz-box-shadow: 0px 0px 3px #ec5f48;-webkit-box-shadow: 0px 0px 3px #ec5f48;box-shadow: 0px 0px 3px #ec5f48;}
+.main-left .input-text:hover,.main-left .input-text-cur{border:1px solid #1ba3e7;-moz-box-shadow: 0px 0px 3px #1ba3e7;-webkit-box-shadow: 0px 0px 3px #1ba3e7;box-shadow: 0px 0px 3px #1ba3e7;}
+.main-left .input-text .input{border:1px solid #f3f3f3;font-size:14px;width:276px;height:38px;*margin-top:-1px;line-height:38px;padding:0 10px;position:relative;z-index:3;background:none;}
+.main-left .input-text span{position: absolute;top:0px;left:0;height:40px;line-height:40px;padding:0 10px;z-index:2;font-size:14px;color:#999;}
+.main-left .input-radio{color:#666;text-align: center;width:137px;height:36px;line-height:36px;float:left;background:url(images/radio_bg.png) no-repeat center;margin-right:12px;border:1px solid #cdcccc;cursor: pointer;}
+.main-left .input-radio:hover{border:1px solid #1ba3e7;-moz-box-shadow: 0px 0px 3px #1ba3e7;-webkit-box-shadow: 0px 0px 3px #1ba3e7;box-shadow: 0px 0px 3px #1ba3e7;color:#0087cb;}
+.main-left .radio-cur{background:url(images/radio_cur.png) no-repeat center;border:1px solid #0087cb;color:#0087cb;}
+.main-left .mr20{margin-right:21px;}
+.main-left .point{color:#0087cb;width:250px;height:42px;line-height:40px;float:left;display:none;}
+.main-left .point-ico1{width:227px;padding-left:23px;background: url(images/yes.png) no-repeat left;}
+.main-left .point-ico2{width:227px;padding-left:23px;background: url(images/no.png) no-repeat left;color:#fa3f3f}
+.main-left .input-div .submit{width:300px;height:44px;line-height:44px;font-size:16px;font-weight: bold;color:#fff;border:0px;background: #0087cb;font-family:"Microsoft Yahei"; cursor: pointer;}
+.main-left .input-yzm{width:188px;}
+.main-left .input-yzm .input{width:166px;}
+.main-left .yanzm{width:86px;text-align: center;float: left;padding-left:10px;padding-right:12px; cursor: pointer;}
+.main-left .yanzm a{color:#368ccc;text-decoration:underline;display: block;}
+.main-right{width:300px;padding-top:56px;float: left}
+.main-right .main-qq{padding-bottom:35px;}
+.main-right .main-qq a{display: block;background: url(images/main_qq.png) no-repeat 0 0;width:57px;height:57px;margin:0 auto;}
+.main-right .main-qq a:hover{background-position:-62px 0;}
+.main-right .main-qq span{display:block;height:45px;line-height:45px;width:221px;background: url(images/main_qqbg.png) no-repeat center;font-size:14px;color:#666;text-align: center;margin:0 auto;}
+.main-right .main-gosign{padding-top:20px;color:#666;font-size:14px;text-align: center;}
+.main-right .main-gosign a{height:30px;line-height:30px;display:block;color:#0087cb;}
+.main-right .main-gosign a:hover{text-decoration: underline;}
+
+.login_check{width:300px;text-align:right;font-size:14px;}
+.login_check span{float: left;width:150px;text-align:left;}
+.login_check span i{display:inline-block;width:16px;height:16px;background: url(images/check.png) no-repeat;vertical-align:middle;margin-right:5px;}
+.login_check span i.cur{background: url(images/checked.png) no-repeat;}
+.login_check a:hover{text-decoration: underline;color:#0087cb}
+
+.win { display:none; position: absolute; z-index:9999;text-align:left; background:#F1F1F1; border-radius:4px; -webkit-border-radius: 4px;-moz-border-radius: 4px; -moz-box-shadow:1px 2px 2px #000; -webkit-box-shadow:1px 2px 2px #000; box-shadow:1px 2px 2px #000;}
+.success-message-win{min-width:274px;height:60px;line-height:60px;text-align:center;padding:0px 10px;position: absolute;top:-81px;left:50%;margin-left:-147px;font-size:14px;color:#fff;background:#0087cb;border-bottom-left-radius:5px;border-bottom-right-radius:5px;box-shadow:0 2px 3px #e4e4e4;-moz-box-shadow:0 2px 3px #e4e4e4;}
+.error-message-win{min-width:274px;height:60px;line-height:60px;text-align:center;padding:0px 10px;position: absolute;top:-81px;left:50%;margin-left:-147px;font-size:14px;color:#fff;background:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;box-shadow:0 2px 3px #e4e4e4;-moz-box-shadow:0 2px 3px #e4e4e4;}
+.confirm_gray_layer { display:none; position:absolute;top:0;left:0;width:100%;height:100%; background-color:#000;-moz-opacity: 0.6;opacity:.60;filter: alpha(opacity=60); z-index:10000; }
+.process-message-win { z-index:11000; top:55%;left:53%; margin:-100px 0 0 -200px; min-width:200px; max-width:400px; padding:20px 30px 20px 70px; background:url(images/loading.gif) no-repeat 45px 22px #F1F1F1; color:#5E5D5E; }
+.success-message-win{}
+.error-message-win{}
