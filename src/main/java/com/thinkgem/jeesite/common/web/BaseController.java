@@ -55,6 +55,12 @@ public abstract class BaseController {
 	protected String frontPath;
 	
 	/**
+	 * 新的基础路径
+	 */
+	@Value("${indexPath}")
+	protected String indexPath;
+	
+	/**
 	 * 前端URL后缀
 	 */
 	@Value("${urlSuffix}")

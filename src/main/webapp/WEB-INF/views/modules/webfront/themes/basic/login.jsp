@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="org.apache.shiro.web.filter.authc.FormAuthenticationFilter"%>
 <%@ include file="/WEB-INF/views/modules/webfront/themes/basic/layouts/taglib.jsp"%>
 <!DOCTYPE html>
 <html>
@@ -35,6 +36,16 @@
 							</div>
 							<span class="point"></span>
 						</div>
+						<c:if test="${isValidateCodeLogin}">
+							<!-- 
+						<div class="input-div clearfix">
+							<div class="input-text">
+								<input type="text" value="" class="input" id="validateCode" name="validateCode"> <span>验证码</span>
+							</div>
+							<span class="point"></span>
+						</div>
+						 -->
+						</c:if>
 						<div class="input-div clearfix">
 							<div class="login_check">
 								<span><i class="cur"></i>自动登录(7天)</span> <a href="http://passport.myfunc.com/user/getpwd?refer=aHR0cDovL3d3dy53ZHpqLmNvbS8=">找回密码？</a>
@@ -61,14 +72,21 @@
 					return false;
 				});
 				myfunc.user.checkfocus();
-				$(".input-div .submit").click(function() {
-					if (myfunc.user.checkblur1($('#username')) && myfunc.user.checkblur1($('#password'), 1)) {
-						$('#login_submit').attr('disabled', 'disabled');
-						$('#login_submit').val('提交中..');
-						myfunc.user.check_submit("csrf_test_name", "ff51725ce3d648ff38674643263b3c8d");
-					}
-					return false;
-				});
+				$(".input-div .submit")
+						.click(
+								function() {
+									if (myfunc.user.checkblur1($('#username'))
+											&& myfunc.user.checkblur1(
+													$('#password'), 1)) {
+										$('#login_submit').attr('disabled',
+												'disabled');
+										$('#login_submit').val('提交中..');
+										myfunc.user
+												.check_submit("csrf_test_name",
+														"ff51725ce3d648ff38674643263b3c8d");
+									}
+									return false;
+								});
 			</script>
 			<script type="text/javascript">
 				document.onkeydown = keyDownSearch;
@@ -76,7 +94,8 @@
 				function keyDownSearch(e) {
 					// 兼容FF和IE和Opera    
 					var theEvent = e || window.event;
-					var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+					var code = theEvent.keyCode || theEvent.which
+							|| theEvent.charCode;
 					if (code == 13) {
 						$('#login_submit').click();//具体处理函数    
 						return false;

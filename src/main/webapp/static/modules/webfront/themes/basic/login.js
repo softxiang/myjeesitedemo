@@ -201,7 +201,7 @@ $.extend($.reg("myfunc.user"), {
 		}
 		/* 密码 */
 		if (id == "password") {
-			if (v.length < 6) {
+			if (v.length < 3) {
 				result = false;
 				objpoint.addClass("point-ico2").text("密码不能少于6个字符").show();
 				objp.addClass("input-text-error").removeClass("input-text-cur");
@@ -548,9 +548,9 @@ $.extend($.reg("myfunc.user"), {
 			auto_login = 1;
 		}
 		;
-		myfunc.user.post('http://' + window.location.host + "/user/login", {
+		myfunc.user.post(window.location.href, {
 			username : $('#username').val(),
-			password : hex_md5($('#password').val()),
+			password : $('#password').val(),
 			login_submit : 1
 		}, function(data) {
 			if (data.error_code == 0) {
