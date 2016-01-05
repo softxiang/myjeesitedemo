@@ -62,10 +62,10 @@
 			<value>
 				/static/** = anon
 				/userfiles/** = anon
-				${indexPath}/** = anon
 				${indexPath}/login = authc
 				${indexPath}/logout = logout
 				${indexPath}/member = roles[webuser]
+				${indexPath}/** = anon
 			</value>
 		</constructor-arg>
 	</bean>
