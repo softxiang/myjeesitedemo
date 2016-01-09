@@ -26,7 +26,7 @@
 						<h2>用户登录</h2>
 						<div class="input-div clearfix">
 							<div class="input-text">
-								<input type="text" value="" class="input required:true" id="username" name="username"> <span>用户名/手机号</span>
+								<input type="text" value="" class="input" id="username" name="username"> <span>用户名/手机号</span>
 							</div>
 							<span class="point">用户名不能为空</span>
 						</div>

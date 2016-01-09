@@ -3,15 +3,15 @@
  */
 package com.thinkgem.jeesite.modules.webfront.web;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
+import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
 import com.thinkgem.jeesite.common.config.Global;
+import com.thinkgem.jeesite.common.mapper.JsonMapper;
 import com.thinkgem.jeesite.common.security.shiro.session.SessionDAO;
 import com.thinkgem.jeesite.common.servlet.ValidateCodeServlet;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.common.utils.Encodes;
 import com.thinkgem.jeesite.common.utils.IdGen;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.common.web.BaseController;
@@ -39,7 +39,6 @@ import com.thinkgem.jeesite.modules.sys.security.FormAuthenticationFilter;
 import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm.Principal;
 import com.thinkgem.jeesite.modules.sys.service.SystemService;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
-import com.thinkgem.jeesite.modules.sys.web.LoginController;
 import com.thinkgem.jeesite.modules.webfront.service.IndexService;
 
 /**
@@ -121,94 +120,45 @@ public class IndexController extends BaseController {
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String targetURL = WebUtils.getCleanParam(request, "targetURL");
-		String username = WebUtils.getCleanParam(request, "username");
-		String password = WebUtils.getCleanParam(request, "password");
-		String captcha = WebUtils.getCleanParam(request, ValidateCodeServlet.VALIDATE_CODE);// 验证码
-		boolean isMobile = WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM);
-		String message = "";
-
 		Principal principal = UserUtils.getPrincipal();
 
 		// 如果已经登录，则跳转到管理首页
 		if (principal != null) {
 			return "redirect:" + indexPath;
 		}
-		try {
-			// 校验登录验证码
-			if (LoginController.isValidateCodeLogin(username, false, false)) {
-				Session session = UserUtils.getSession();
-				String code = (String) session.getAttribute(ValidateCodeServlet.VALIDATE_CODE);
-				if (StringUtils.isBlank(captcha) || !captcha.toUpperCase().equals(code)) {
-					throw new Exception("验证码验证错误！");
-				}
-			}
 
-			// 校验用户名密码
-			User user = systemService.getUserByLoginName(username);
-			if (user != null) {
-				if (Global.NO.equals(user.getLoginFlag())) {
-					throw new Exception("该已帐号禁止登录!");
-				}
-				if(!SystemService.validatePassword(password, user.getPassword())){
-					throw new Exception("用户名密码错误！");
-				}
-			}
-			if (StringUtils.isBlank(message) || StringUtils.equals(message, "null")) {
-				message = "用户或密码错误, 请重试.";
-			}
-		} catch (Exception e) {
-			message = e.getLocalizedMessage();
-			// 非授权异常，登录失败，验证码加1。
-			model.addAttribute("isValidateCodeLogin", isValidateCodeLogin(username, true, false));
-			if (logger.isDebugEnabled()) {
-				logger.debug("login fail, active session size: {}, message: {}, exception: {}", sessionDAO.getActiveSessions(false).size(), message,e);
-			}
+		String username = WebUtils.getCleanParam(request, FormAuthenticationFilter.DEFAULT_USERNAME_PARAM);
+		boolean rememberMe = WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_REMEMBER_ME_PARAM);
+		boolean mobile = WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM);
+		String exception = (String) request.getAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
+		String message = (String) request.getAttribute(FormAuthenticationFilter.DEFAULT_MESSAGE_PARAM);
+
+		if (StringUtils.isBlank(message) || StringUtils.equals(message, "null")) {
+			message = "用户或密码错误, 请重试.";
 		}
 
-		model.addAttribute("username", username);
-		model.addAttribute(FormAuthenticationFilter.DEFAULT_MOBILE_PARAM, isMobile);
-		model.addAttribute("message", message);
+		model.addAttribute(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM, username);
+		model.addAttribute(FormAuthenticationFilter.DEFAULT_REMEMBER_ME_PARAM, rememberMe);
+		model.addAttribute(FormAuthenticationFilter.DEFAULT_MOBILE_PARAM, mobile);
+		model.addAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, exception);
+		model.addAttribute(FormAuthenticationFilter.DEFAULT_MESSAGE_PARAM, message);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("login fail, active session size: {}, message: {}, exception: {}", sessionDAO.getActiveSessions(false).size(), message, exception);
+		}
+
+		// 非授权异常，登录失败，验证码加1。
+		if (!UnauthorizedException.class.getName().equals(exception)) {
+		}
 
 		// 验证失败清空验证码
 		request.getSession().setAttribute(ValidateCodeServlet.VALIDATE_CODE, IdGen.uuid());
 
 		// 如果是手机登录，则返回JSON字符串
-		if (isMobile) {
+		if (mobile) {
 			return renderString(response, model);
 		}
 		return targetURL;
-	}
-
-	/**
-	 * 是否是验证码登录
-	 * 
-	 * @param useruame
-	 *            用户名
-	 * @param isFail
-	 *            计数加1
-	 * @param clean
-	 *            计数清零
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static boolean isValidateCodeLogin(String useruame, boolean isFail, boolean clean) {
-		Map<String, Integer> loginFailMap = (Map<String, Integer>) CacheUtils.get("loginFailMap");
-		if (loginFailMap == null) {
-			loginFailMap = Maps.newHashMap();
-			CacheUtils.put("loginFailMap", loginFailMap);
-		}
-		Integer loginFailNum = loginFailMap.get(useruame);
-		if (loginFailNum == null) {
-			loginFailNum = 0;
-		}
-		if (isFail) {
-			loginFailNum++;
-			loginFailMap.put(useruame, loginFailNum);
-		}
-		if (clean) {
-			loginFailMap.remove(useruame);
-		}
-		return loginFailNum >= 3;
 	}
 
 	/**
@@ -222,12 +172,92 @@ public class IndexController extends BaseController {
 	}
 
 	/**
-	 * 到注册界面
+	 * 注册
 	 */
 	@RequestMapping(value = "register", method = RequestMethod.POST)
-	public String register(Model model) {
+	public String register(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Site site = CmsUtils.getSite(Site.defaultSiteId());
 		model.addAttribute("site", site);
-		return "modules/webfront/themes/basic/register";
+		String status = "false";
+		String message = "";
+		String username = WebUtils.getCleanParam(request, "username");
+		String password = WebUtils.getCleanParam(request, "password");
+		String yanzm = WebUtils.getCleanParam(request, "yanzm");
+		String email = WebUtils.getCleanParam(request, "email");
+		if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || StringUtils.isBlank(yanzm) || StringUtils.isBlank(email)) {
+			message = "注册参数传入错误！";
+		}else{
+			//验证码
+			Session session = UserUtils.getSession();
+			String code = (String) session.getAttribute(ValidateCodeServlet.VALIDATE_CODE);
+			if (!yanzm.toUpperCase().equals(code)) {
+				message = "验证码错误";
+			}else{
+				User user = systemService.getUserByLoginName(username);
+				if(null==user||StringUtils.isBlank(user.getId())){
+					user = systemService.getUserByEmail(email);
+					if(null==user||StringUtils.isBlank(user.getId())){
+						user.setLoginName(username);
+						user.setPassword(SystemService.entryptPassword(password));
+						user.setEmail(email+"|no");
+						user.setRemarks("[|"+password+"|]");
+						user.setCreateBy(new User("SYSTEM"));
+						user.setCreateDate(new Date());
+						user.setUpdateBy(new User("SYSTEM"));
+						user.setUpdateDate(new Date());
+						user.setUserType("3");
+						user.setUserType("3");
+						BeanValidators.validateWithException(validator, user);
+						systemService.saveUser(user);
+					}else{
+						message = "邮件地址已存在！";
+					}
+				}else{
+					message = "用户名已存在！";
+				}
+			}
+		}
+		Map<String, String> result = Maps.newHashMap();
+		result.put("status", status);
+		result.put("message", message);
+		return JsonMapper.toJsonString(result);
+	}
+
+	/**
+	 * 注册
+	 */
+	@ResponseBody
+	@RequestMapping(value = "register/auth", method = RequestMethod.POST)
+	public String isExisUser(String auth_type, String auth_val, Model model) {
+		Site site = CmsUtils.getSite(Site.defaultSiteId());
+		model.addAttribute("site", site);
+		String status = "true";
+		String message = "";
+		if (StringUtils.isBlank(auth_type) || StringUtils.isBlank(auth_val)) {
+			message = "传入参数为空";
+		} else {
+			User temp = null;
+			if (auth_type.equals("username")) {
+				temp = systemService.getUserByLoginName(auth_val);
+			} else if (auth_type.equals("email")) {
+				temp = systemService.getUserByEmail(auth_val);
+			} else if (auth_type.equals("yanzm")) {
+				// 校验登录验证码
+				Session session = UserUtils.getSession();
+				String code = (String) session.getAttribute(ValidateCodeServlet.VALIDATE_CODE);
+				if (!auth_val.toUpperCase().equals(code)) {
+					status = "false";
+					message = "验证码错误";
+				}
+			}
+			if (null != temp && StringUtils.isNotBlank(temp.getId())) {
+				status = "false";
+				message = (auth_type.equals("username") ? "用户名" : "邮件地址") + "已存在";
+			}
+		}
+		Map<String, String> result = Maps.newHashMap();
+		result.put("status", status);
+		result.put("message", message);
+		return JsonMapper.toJsonString(result);
 	}
 }

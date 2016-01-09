@@ -17,6 +17,8 @@ body{font-family:"微软雅黑", Microsoft YaHei, Verdana, Arial; font-size:12px
 .main-left h2 a { margin-left: 10px; color: #0087cb }
 .main-left h2 a:hover { text-decoration: underline; }
 .main-left .input-div{padding-top:20px;}
+.main-left .input-div .errormsg{display:none;color:#ff5656;}
+.main-left .input-div .successmsg{display:none;color:#0087cb;}
 .main-left .input-div .font14{font-size:14px;color:#333;}
 .main-left .input-text{color:#333;width:298px;margin-right:12px;border:1px solid #cdcccc;position: relative;z-index:1;height:40px;overflow: hidden;float: left;}
 .main-left .input-text-error{border:1px solid #ec5f48;color:#ff5656;-moz-box-shadow: 0px 0px 3px #ec5f48;-webkit-box-shadow: 0px 0px 3px #ec5f48;box-shadow: 0px 0px 3px #ec5f48;}
@@ -51,9 +53,5 @@ body{font-family:"微软雅黑", Microsoft YaHei, Verdana, Arial; font-size:12px
 .login_check a:hover{text-decoration: underline;color:#0087cb}
 
 .win { display:none; position: absolute; z-index:9999;text-align:left; background:#F1F1F1; border-radius:4px; -webkit-border-radius: 4px;-moz-border-radius: 4px; -moz-box-shadow:1px 2px 2px #000; -webkit-box-shadow:1px 2px 2px #000; box-shadow:1px 2px 2px #000;}
-.success-message-win{min-width:274px;height:60px;line-height:60px;text-align:center;padding:0px 10px;position: absolute;top:-81px;left:50%;margin-left:-147px;font-size:14px;color:#fff;background:#0087cb;border-bottom-left-radius:5px;border-bottom-right-radius:5px;box-shadow:0 2px 3px #e4e4e4;-moz-box-shadow:0 2px 3px #e4e4e4;}
-.error-message-win{min-width:274px;height:60px;line-height:60px;text-align:center;padding:0px 10px;position: absolute;top:-81px;left:50%;margin-left:-147px;font-size:14px;color:#fff;background:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;box-shadow:0 2px 3px #e4e4e4;-moz-box-shadow:0 2px 3px #e4e4e4;}
 .confirm_gray_layer { display:none; position:absolute;top:0;left:0;width:100%;height:100%; background-color:#000;-moz-opacity: 0.6;opacity:.60;filter: alpha(opacity=60); z-index:10000; }
 .process-message-win { z-index:11000; top:55%;left:53%; margin:-100px 0 0 -200px; min-width:200px; max-width:400px; padding:20px 30px 20px 70px; background:url(images/loading.gif) no-repeat 45px 22px #F1F1F1; color:#5E5D5E; }
-.success-message-win{}
-.error-message-win{}

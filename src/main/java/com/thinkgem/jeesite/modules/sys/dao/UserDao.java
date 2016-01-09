@@ -25,6 +25,13 @@ public interface UserDao extends CrudDao<User> {
 	public User getByLoginName(User user);
 
 	/**
+	 * 根据邮件查询用户
+	 * @param email
+	 * @return
+	 */
+	public User getByEmail(User user);
+
+	/**
 	 * 通过OfficeId获取用户列表，仅返回用户id和name（树查询用户时用）
 	 * @param user
 	 * @return

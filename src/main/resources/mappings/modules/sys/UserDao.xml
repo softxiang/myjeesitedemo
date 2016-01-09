@@ -145,6 +145,15 @@
 		WHERE a.login_name = #{loginName} AND a.del_flag = #{DEL_FLAG_NORMAL}
 	</select>
 	
+	<!-- 根据邮件地址查询用户 -->
+	<select id="getByEmail" resultType="User" parameterType="User">
+		SELECT
+			<include refid="userColumns"/>
+		FROM sys_user a
+		<include refid="userJoins"/>
+		WHERE a.email = #{email} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+	
 	<!-- 分页查询用户信息 -->
 	<select id="findList" resultType="User">
 		SELECT

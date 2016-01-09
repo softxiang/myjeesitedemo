@@ -88,6 +88,15 @@ public class SystemService extends BaseService implements InitializingBean {
 		return UserUtils.getByLoginName(loginName);
 	}
 	
+	/**
+	 * 根据邮件地址获取用户
+	 * @param loginName
+	 * @return
+	 */
+	public User getUserByEmail(String email) {
+		return UserUtils.getByEmail(email);
+	}
+	
 	public Page<User> findUser(Page<User> page, User user) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
@@ -537,7 +546,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			identityService.deleteUser(userId);
 		}
 	}
-	
+
 	///////////////// Synchronized to the Activiti end //////////////////
 	
 }

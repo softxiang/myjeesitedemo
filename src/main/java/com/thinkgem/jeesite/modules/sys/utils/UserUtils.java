@@ -42,6 +42,7 @@ public class UserUtils {
 	public static final String USER_CACHE = "userCache";
 	public static final String USER_CACHE_ID_ = "id_";
 	public static final String USER_CACHE_LOGIN_NAME_ = "ln";
+	public static final String USER_CACHE_EMAIL_ = "userEmail";
 	public static final String USER_CACHE_LIST_BY_OFFICE_ID_ = "oid_";
 
 	public static final String CACHE_ROLE_LIST = "roleList";
@@ -88,6 +89,26 @@ public class UserUtils {
 		return user;
 	}
 	
+	/**
+	 * 根据邮件地址获取用户
+	 * @param email
+	 * @return 取不到返回null
+	 */
+	public static User getByEmail(String email){
+		User user = (User)CacheUtils.get(USER_CACHE, USER_CACHE_EMAIL_ + email);
+		if (user == null){
+			User temp = new User();
+			temp.setEmail(email);
+			user = userDao.getByEmail(temp);
+			if (user == null){
+				return null;
+			}
+			user.setRoleList(roleDao.findList(new Role(user)));
+			CacheUtils.put(USER_CACHE, USER_CACHE_ID_ + user.getId(), user);
+			CacheUtils.put(USER_CACHE, USER_CACHE_EMAIL_ + user.getEmail(), user);
+		}
+		return user;
+	}
 	/**
 	 * 清除当前用户缓存
 	 */

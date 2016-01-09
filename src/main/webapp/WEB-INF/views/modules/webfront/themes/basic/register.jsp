@@ -17,43 +17,50 @@
 		<div class="ty" style="background-color:#FFF;">
 			<div class="main clearfix">
 				<div class="main-left">
-					<h2>立即注册</h2>
-					<div class="input-div clearfix">
-						<div class="input-text">
-							<input type="text" value="" class="input register-ajax" id="username"> <span>用户名</span>
+					<form method="post">
+						<h2>立即注册</h2>
+						<div class="input-div clearfix">
+							<div class="input-text">
+								<input type="text" value="" class="input register-ajax" id="username"> <span>用户名</span>
+							</div>
+							<span class="point">用户名不超过15个字符</span>
 						</div>
-						<span class="point">用户名不超过15个字符</span>
-					</div>
-					<div class="input-div clearfix">
-						<div class="input-text">
-							<input type="password" value="" class="input" id="password"> <span>密码</span>
+						<div class="input-div clearfix">
+							<div class="input-text">
+								<input type="password" value="" class="input" id="password"> <span>密码</span>
+							</div>
+							<span class="point">密码不少于6位数</span>
 						</div>
-						<span class="point">密码不少于6位数</span>
-					</div>
-					<div class="input-div clearfix">
-						<div class="input-text">
-							<input type="password" value="" class="input" id="password2"> <span>再次输入密码</span>
+						<div class="input-div clearfix">
+							<div class="input-text">
+								<input type="password" value="" class="input" id="password2"> <span>再次输入密码</span>
+							</div>
+							<span class="point"></span>
 						</div>
-						<span class="point"></span>
-					</div>
-					<div class="input-div clearfix">
-						<div class="input-text">
-							<input type="text" value="" class="input register-ajax" id="email"> <span>E-mail</span>
+						<div class="input-div clearfix">
+							<div class="input-text">
+								<input type="text" value="" class="input register-ajax" id="email"> <span>E-mail</span>
+							</div>
+							<span class="point"></span>
 						</div>
-						<span class="point"></span>
-					</div>
-					<div class="input-div clearfix">
-						<div class="input-text input-yzm">
-							<input type="text" value="" class="input register-ajax" id="yanzm"> <span>验证码</span>
+						<div class="input-div clearfix">
+							<div class="input-text input-yzm">
+								<input type="text" value="" class="input register-ajax" id="yanzm"> <span>验证码</span>
+							</div>
+							<div class="yanzm">
+								<img src="${pageContext.request.contextPath}/servlet/validateCodeServlet" width="85" height="35" style="border:0;"
+									onclick="$(this).attr('src','${pageContext.request.contextPath}/servlet/validateCodeServlet?'+new Date().getTime());">
+							</div>
+							<span class="point"></span>
 						</div>
-						<div class="yanzm">
-							<img src="http://passport.wdzj.com/captcha/1451807877.5953.jpg" width="85" height="30" style="border:0;" alt=" ">
+						<div class="input-div clearfix">
+							<input type="hidden" id="reg_free" value="1"> <input type="button" name="reg_submit" id="reg_submit" value="提 交" class="submit">
 						</div>
-						<span class="point"></span>
-					</div>
-					<div class="input-div clearfix">
-						<input type="hidden" id="reg_free" value="1"> <input type="button" name="reg_submit" id="reg_submit" value="提 交" class="submit">
-					</div>
+						<div class="input-div clearfix msgdiv">
+							<div id="errormsg" class="errormsg"></div>
+							<div id="successmsg" class="successmsg"></div>
+						</div>
+					</form>
 				</div>
 				<div class="main-right">
 					<div class="main-qq">
@@ -66,5 +73,42 @@
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript">
+		myfunc.user.register();
+	</script>
+	<!-- 
+	<script type="text/javascript">
+		$(".input-text .input").blur(function() {
+			myfunc.user.checkblur1(this, 1);
+			return false;
+		});
+		myfunc.user.checkfocus();
+		$(".input-div .submit").click(
+				function() {
+					if (myfunc.user.checkblur1($('#username'))
+							&& myfunc.user.checkblur1($('#password'), 1)) {
+						$('#reg_submit').attr('disabled', 'disabled');
+						$('#reg_submit').val('提交中..');
+						myfunc.user.check_submit("csrf_test_name",
+								"ff51725ce3d648ff38674643263b3c8d");
+					}
+					return false;
+				});
+	</script>
+	<script type="text/javascript">
+		document.onkeydown = keyDownSearch;
+
+		function keyDownSearch(e) {
+			// 兼容FF和IE和Opera    
+			var theEvent = e || window.event;
+			var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+			if (code == 13) {
+				$('#login_submit').click();//具体处理函数    
+				return false;
+			}
+			return true;
+		}
+	</script>
+	 -->
 </body>
 </html>

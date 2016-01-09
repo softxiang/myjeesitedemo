@@ -118,26 +118,10 @@ $.extend($.reg("myfunc.user"), {
 		$(".confirm_gray_layer,#" + id).remove();
 	},
 	successMsg : function(msg, time) {
-		$(".container .main").append('<div class="success-message-win">' + msg + '</div>');
-		var ml = -($(".success-message-win").width() / 2);
-		$(".success-message-win").css({
-			"margin-left" : ml
-		});
-		$('.success-message-win').show();
-		setTimeout(function() {
-			$(".success-message-win").remove();
-		}, time || 2000);
+		$(".successmsg").text(msg).show().delay(3000).hide(300);
 	},
 	errorMsg : function(msg, time) {
-		$(".container .main").append('<div class="error-message-win">' + msg + '</div>');
-		var ml = -($(".error-message-win").width() / 2);
-		$(".error-message-win").css({
-			"margin-left" : ml
-		});
-		$('.error-message-win').show();
-		setTimeout(function() {
-			$(".error-message-win").remove();
-		}, time || 2000);
+		$(".errormsg").text(msg).show().delay(3000).hide(300);
 	},
 	get : function(url, data, func, error) {
 		if ($.isFunction(data)) {
@@ -145,7 +129,6 @@ $.extend($.reg("myfunc.user"), {
 			func = data;
 			$data = null;
 		}
-		;
 		$.ajax({
 			type : 'get',
 			url : url,
@@ -190,9 +173,9 @@ $.extend($.reg("myfunc.user"), {
 		var result = true;
 		/* 用户名 */
 		if (id == "username") {
-			if (v.length == 0) {
+			if (v.length < 5) {
 				result = false;
-				objpoint.addClass("point-ico2").text("用户名不能为空").show();
+				objpoint.addClass("point-ico2").text("用户名长度不能少于5个字符！").show();
 				objp.addClass("input-text-error").removeClass("input-text-cur");
 			} else {
 				objpoint.removeClass("point-ico2").addClass("point-ico1").text("");
@@ -201,7 +184,7 @@ $.extend($.reg("myfunc.user"), {
 		}
 		/* 密码 */
 		if (id == "password") {
-			if (v.length < 3) {
+			if (v.length < 6) {
 				result = false;
 				objpoint.addClass("point-ico2").text("密码不能少于6个字符").show();
 				objp.addClass("input-text-error").removeClass("input-text-cur");
@@ -255,21 +238,12 @@ $.extend($.reg("myfunc.user"), {
 				objp.removeClass("input-text-error");
 			}
 		}
-		/* 用户类型 */
-		if (id == "usertype") {
-			if (!$("#usertype").val() || $("#usertype").nextAll(".input-radio").hasClass("radio-cur") == false) {
-				$("#usertype").siblings(".point").addClass("point-ico2").text("请选择用户类型").show();
-				result = false;
-			} else {
-				$("#usertype").siblings(".point").addClass("point-ico1").removeClass("point-ico2").text("").show();
-			}
-		}
 		return result;
 	},
 	checkfocus : function() {
 		$("#username, #password, #password2, #email, #yanzm").focus(function() {
 			var promptcode = new Array();
-			promptcode['username'] = '用户名不能为空';
+			promptcode['username'] = '用户名长度不能少于5个字符！';
 			promptcode['password'] = '密码不少于6位数';
 			promptcode['password2'] = '再次输入密码';
 			promptcode['email'] = '请输入E-mail地址';
@@ -279,9 +253,31 @@ $.extend($.reg("myfunc.user"), {
 		});
 	},
 	register : function() {
-		$("#password, #password2, #usertype").blur(function() {
-			myfunc.user.checkblur1(this);
-			return false;
+		$("#password,#password2").blur(function() {
+			return myfunc.user.checkblur1(this);
+		});
+		$(".register-ajax").blur(function() {
+			if(!myfunc.user.checkblur1(this)){
+				return false;
+			}
+			var $this = $(this);
+			myfunc.user.post(location.href+"/auth", {
+				auth_type : $this.attr('id'),
+				auth_val : $this.val()
+			}, function(data) {
+				var dataobj = eval("("+data+")");
+				if (eval(dataobj.status)) {
+					$this.parent().removeClass("input-text-error").siblings(".point").removeClass("point-ico2").addClass("point-ico1").text("");
+					$("#reg_submit").removeClass($this.attr('id'));
+					return true;
+				} else {
+					$("#reg_submit").addClass($this.attr('id'));
+					$this.parent().addClass("input-text-error").removeClass("input-text-cur").siblings(".point").addClass("point-ico2").text(dataobj.message).show();
+					return false;
+				}
+			},function(){
+				return false;
+			});
 		});
 		myfunc.user.checkfocus();
 		$(document).keydown(function(e) {
@@ -291,81 +287,44 @@ $.extend($.reg("myfunc.user"), {
 				$("#reg_submit").click();
 		});
 		$("#reg_submit").click(function() {
-			var auths = new Array('', 'username', 'password', 'password2', 'email', 'usertype', 'yanzm');
-			for (var i = 0, len = auths.length; i < len; i++) {
-				if ($(this).hasClass(auths[i]) == true)
-					continue;
-				if (!myfunc.user.checkblur1('#' + auths[i]))
+			$("#username, #password, #password2, #email, #yanzm").each(function(){
+				if($(this)&&$(this).val().length<1){
+					myfunc.user.errorMsg("所有数据必须填写！");
 					return false;
-			}
-			;
-			if ($('#username').val() == '' || $('#email').val() == '' || $('#yanzm').val() == '')
-				return false;
-			myfunc.user.process();
-			myfunc.user.post('http://' + window.location.host + "/user/auth_register", {
-				username : $('#username').val(),
-				password : $('#password').val(),
-				password2 : $('#password2').val(),
-				email : $('#email').val(),
-				usertype : $('#usertype').val(),
-				secanswer : $('#yanzm').val(),
-				free : $("#reg_free").val()
-			}, function(data) {
-				if (data.status == 1) {
-					_paq.push([ "setCustomVariable", 1, "id", data.member.uid, "visit" ]);
-					_paq.push([ "setCustomVariable", 2, "name", data.member.username, "visit" ]);
-					_paq.push([ "setCustomVariable", 3, "refer", "pc_register", "visit" ]);
-					_paq.push([ "setCookieDomain", "*.myfunc.com" ]);
-					_paq.push([ "enableLinkTracking" ]);
-					_paq.push([ "trackEvent", "bbs.myfunc.com", "bbsregister", "page" ]);
-					_paq.push([ "setTrackerUrl", "\/\/piwik.myfunc.com/piwik.php" ]);
-					_paq.push([ "setSiteId", 1 ]);
-					$("#reg_submit").disable();
-					myfunc.user.successMsg(data.msg);
-					myfunc.lazy_jump(2, data.refer);
-				} else if (data.status == -1 || data.status == -2 || data.status == -3 || data.status == -4 || data.status == -6) {
-					$('#' + auths[Math.abs(data.status)]).parent().addClass("input-text-error").removeClass("input-text-cur").siblings(".point").addClass("point-ico2").text(data.msg).show();
-				} else if (data.status == -5) {
-					$("#usertype").siblings(".point").addClass("point-ico2").text(data.msg).show();
-				} else if (data.status == -9) {
-					myfunc.user.errorMsg(data.msg);
-					myfunc.lazy_jump(2, data.refer);
-				} else
-					myfunc.user.errorMsg(data.msg);
-				myfunc.user.processClose();
-			}, function() {
-				myfunc.user.processClose();
-			});
-			return false;
-		});
-		$(".main-left .yanzm").click(function() {
-			var $this = $(this);
-			myfunc.user.get('http://' + window.location.host + "/user/register", {
-				get_captcha : 1
-			}, function(data) {
-				if (data)
-					$this.html(data);
-			});
-			return false;
-		});
-		$(".register-ajax").blur(function() {
-			var $this = $(this);
-			// if ($this.val() == '') return false; ||
-			// $this.parent().hasClass('input-text-error')
-			myfunc.user.post('http://' + window.location.host + '/user/register_ajax_auth', {
-				auth_type : $this.attr('id'),
-				auth_val : $this.val()
-			}, function(data) {
-				if (data.status == -1) {
-					$("#reg_submit").addClass($this.attr('id'));
-					$this.parent().addClass("input-text-error").removeClass("input-text-cur").siblings(".point").addClass("point-ico2").text(data.msg).show();
-				} else {
-					$("#reg_submit").removeClass($this.attr('id'));
-					$this.parent().removeClass("input-text-error").siblings(".point").removeClass("point-ico2").addClass("point-ico1").text("");
+				}else{
+					var hasError = $(".input").parent().hasClass("input-text-error");
+					if(!hasError){
+						myfunc.user.process();
+						myfunc.user.post('http://' + window.location.host + "/user/auth_register", {
+							username : $('#username').val(),
+							password : $('#password').val(),
+							email : $('#email').val(),
+							yanzm : $('#yanzm').val(),
+						}, function(data) {
+							var dataobj = eval("("+data+")");
+							if (dataobj.status == 1) {
+								$("#reg_submit").disable();
+								myfunc.user.successMsg(data.msg);
+								myfunc.lazy_jump(2, data.refer);
+							} else if (data.status == -1 || data.status == -2 || data.status == -3 || data.status == -4 || data.status == -6) {
+								$('#' + auths[Math.abs(data.status)]).parent().addClass("input-text-error").removeClass("input-text-cur").siblings(".point").addClass("point-ico2").text(data.msg).show();
+							}else if (data.status == -9) {
+								myfunc.user.errorMsg(data.msg);
+								myfunc.lazy_jump(2, data.refer);
+							} else
+								myfunc.user.errorMsg(data.msg);
+							myfunc.user.processClose();
+						}, function() {
+							myfunc.user.processClose();
+						});
+					}else{
+						myfunc.user.errorMsg("验证失败，请根据提示填写");
+					}
 				}
 			});
 			return false;
-		})
+		});
+		
 	},
 
 	qqconnect_register : function() {
